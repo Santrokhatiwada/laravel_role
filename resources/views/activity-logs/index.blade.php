@@ -16,7 +16,9 @@
                                     <th>Log ID</th>
                                     <th>Description</th>
                                     <th>Causer</th>
+                                    <th>Model</th>
                                     <th>Date</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -25,6 +27,7 @@
                                     <td>{{ $log->id }}</td>
                                     <td>{{ $log->description }}</td>
                                     <td>{{ $log->causer->name ?? 'System' }}</td>
+                                    <td>{{$log->subject_type}}</td>
                                     <td>{{ $log->created_at }}</td>
                                 </tr>
                                 @endforeach
