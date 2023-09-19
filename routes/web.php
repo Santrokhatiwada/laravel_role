@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Models\User;
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -31,3 +32,5 @@ Route::group(['middleware'=>['auth']],function(){
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
 });
+
+Route::get('activity-log',[UserController::class,'logActivity'])->name('activity');

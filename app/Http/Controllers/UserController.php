@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Models\Role;
+
 
 class UserController extends Controller
 {
@@ -43,12 +45,15 @@ class UserController extends Controller
             'password' => 'required|same:confirm-password',
             'roles' => 'required'
         ]);
-    
+      
         $input = $request->all();
+
         $input['password'] = Hash::make($input['password']);
-    
+       
         $user = User::create($input);
+       
         $user->assignRole($request->input('roles'));
+        
     
         return redirect()->route('users.index')
                         ->with('success','User created successfully');
@@ -125,6 +130,13 @@ class UserController extends Controller
         User::find($id)->delete();
         return redirect()->route('users.index')
                         ->with('success','User deleted successfully');
+    }
+
+
+    public function logActivity(){
+        $activityLogs = Activity::all(); // 
+
+        return view('activity-logs.index', compact('activityLogs'));
     }
 }
 
