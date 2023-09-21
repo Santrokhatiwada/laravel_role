@@ -26,9 +26,11 @@
                                 <tr>
                                     <td>{{ $log->id }}</td>
                                     <td>{{ $log->description }}</td>
-                                    <td>{{ $log->causer->name ?? 'System' }}</td>
+                                    <td>{{ $log->causer->name  }}</td>
+                                
                                     <td>{{$log->subject_type}}</td>
-                                    <td>{{ $log->created_at }}</td>
+                                    <td>{{ Carbon\Carbon::parse($log->updated_at)->diffForHumans() }}</td>
+
                                 </tr>
                                 @endforeach
                             </tbody>
