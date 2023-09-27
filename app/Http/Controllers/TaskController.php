@@ -7,22 +7,23 @@ use App\Models\Task;
 use App\Models\User;
 use App\Notifications\TaskNotification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
+
 use Spatie\ModelStatus\Status;
 
 class TaskController extends Controller
 {
-    
-    
+
+
 
     private TaskRepositoryInterface $taskRepository;
 
     public function __construct(TaskRepositoryInterface $taskRepository)
     {
-        $this->middleware('permission:task-list|task-create|task-edit|task-delete', ['only' => ['index','store']]);
-        $this->middleware('permission:task-create', ['only' => ['create','store']]);
-        $this->middleware('permission:task-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:task-list|task-create|task-edit|task-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:task-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:task-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:task-delete', ['only' => ['destroy']]);
         $this->taskRepository = $taskRepository;
     }
@@ -32,16 +33,16 @@ class TaskController extends Controller
         $tasks = $this->taskRepository->getAllTasks();
 
         $allpending = Status::where('name', 'pending')
-        ->orderBy('id', 'DESC')->get();
+            ->orderBy('id', 'DESC')->get();
 
-        $allprogress=Status::whereIn('name',['on-prgoress'])->get();
-        $allcompleted=Status::whereIn('name',['completed'])->get();
-        $allaccepted=Status::whereIn('name',['accepted'])->get();
-        $allrejected=Status::whereIn('name',['rejected'])->get();
+        $allprogress = Status::whereIn('name', ['on-prgoress'])->get();
+        $allcompleted = Status::whereIn('name', ['completed'])->get();
+        $allaccepted = Status::whereIn('name', ['accepted'])->get();
+        $allrejected = Status::whereIn('name', ['rejected'])->get();
 
 
 
-        return view('tasks.index', compact('tasks','allpending','allprogress','allcompleted','allaccepted','allrejected'));
+        return view('tasks.index', compact('tasks', 'allpending', 'allprogress', 'allcompleted', 'allaccepted', 'allrejected'));
     }
 
     /**
@@ -80,7 +81,7 @@ class TaskController extends Controller
 
         $tasks = $this->taskRepository->storeTask($data);
 
-      
+
 
         return redirect()->route('tasks.index', compact('tasks'));
     }
@@ -99,7 +100,7 @@ class TaskController extends Controller
         $task = $result['task'];
         $user = $result['user'];
 
-        return view('tasks.show', compact('task','user'));
+        return view('tasks.show', compact('task', 'user'));
     }
 
     /**
@@ -129,23 +130,23 @@ class TaskController extends Controller
      */
     public function update(Request $request, $id)
     {
-       
+
         $data = $request->validate([
             'task_name' => 'nullable',
             'description' => 'nullable',
             'assigner_id' => 'integer',
             'user_id' => 'nullable',
             'deadline' => 'nullable',
-            'new_status' => 'required', 
+            'new_status' => 'required',
 
         ]);
 
 
         // $data['assigner_id'] = intval($request->assigner_id);
-        
+
         $data['user_id'] = intval($request->user_id);
 
-        
+
 
         $task = $this->taskRepository->updateTask($id, $data);
 
@@ -162,8 +163,7 @@ class TaskController extends Controller
     {
         $this->taskRepository->deleteTask($id);
         return redirect()->route('tasks.index')
-        ->with('success','Task deleted successfully');
-
+            ->with('success', 'Task deleted successfully');
     }
 
     // public function updateStatus(Request $request, $id){
@@ -182,14 +182,46 @@ class TaskController extends Controller
 
     // }
 
-    public function update_task(Request $request, Task $task) {
+    public function update_task(Request $request, Task $task)
+    {
         $status = $request->get('status');
         $id = $request->get('id');
- 
+
         $task = Task::find($id);
         $task->statuses = $status;
         $task->save();
         return 'Task Update successfully.';
     }
 
+
+
+    public function taskNotification()
+    {
+
+
+        if (Auth::user()->getRoleNames()->contains('SuperAdmin')){
+            $notifications = [];
+
+            $users = User::all();
+
+            foreach ($users as $user) {
+                $userNotifications = $user->notifications
+                    ->where('notifiable_id','=' ,Auth::id())
+                    ->pluck('data')
+                    ->toArray();
+    
+                $notifications = array_merge($notifications, $userNotifications);
+            }
+            return response()->json($notifications);
+        }
+
+        if (Auth::user()->getRoleNames()->contains('User')){
+
+            $notifications = Auth::user()->notifications->pluck('data');
+          
+
+
+            return response()->json($notifications);
+        }
+    }
 }

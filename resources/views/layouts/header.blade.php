@@ -21,10 +21,35 @@
             <svg class="icon icon-lg">
               <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-list-rich"></use>
             </svg></a></li>
-        <li class="nav-item"><a class="nav-link" href="#">
-            <svg class="icon icon-lg">
-              <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-envelope-open"></use>
-            </svg></a></li>
+        <script src="{{ asset('js/script.js') }}"></script>
+
+
+       
+<!-- Notification Icon with Shake Animation -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+
+
+
+
+
+
+    <!-- Notification Icon with Shake Animation and Dropdown -->
+<li class="nav-item dropdown">
+    <a onclick="setNotificationCount()" class="nav-link" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+       
+        <i class="fa-regular fa-bell" id="notificationIcon" style="font-size: 24px; color: red;"><span id="notification_count" style="font-size:1rem; margin-left:.2rem; position:absolute;top:-0px;">1</span></i>
+    </a>
+    <div class="dropdown-menu dropdown-menu-end" id="notificationDropdown">
+        <!-- Your notification list goes here -->
+        <div class="dropdown-header">Notifications</div>
+        <!-- Add individual notifications in a loop or with dynamic data -->
+       
+        <!-- Add more notifications as needed -->
+    </div>
+</li>
+
       </ul>
       <ul class="header-nav ms-3">
         <li class="nav-item dropdown"><a class="nav-link py-0" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
@@ -62,5 +87,46 @@
       </nav>
     </div>
   </header>
+
+  <!-- ... your existing HTML code ... -->
+
+<!-- JavaScript libraries -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Your JavaScript code -->
+<script>
+  function setNotificationCount(){
+    document.getElementById('notification_count').innerText='';
+  }
+  getNotification();
+function getNotification() {
+    // Perform an AJAX request to fetch notifications
+  
+    $.ajax({
+        url: '/notifications', // Replace with the actual route to retrieve notifications
+        type: 'GET',
+        headers:{
+          'X-CSRF-TOKEN': "{{ csrf_token()}}"
+        },
+        success: function(data) {
+            // Assuming notifications have 'id' and 'message' fields
+            var notificationDropdown = $('#notificationDropdown');
+            // Clear existing dropdown items
+            notificationDropdown.empty();
+            // Populate the dropdown with notification items
+            console.log(data.length);
+            data.forEach(function(notification) {
+                    var item = $('<a>').addClass('dropdown-item').attr('href', '#').text(notification.data);
+                    notificationDropdown.append(item);
+                    document.getElementById('notification_count').innerText=data.length;
+                });
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+};
+</script>
+
 
  

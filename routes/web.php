@@ -35,6 +35,9 @@ Route::group(['middleware'=>['auth']],function(){
     Route::resource('tasks', TaskController::class);
 
 
+Route::get('notifications',[TaskController::class,'taskNotification'])->name('notifications');
+
+
 Route::get('activity-log',[UserController::class,'logActivity'])->name('activity');
 
 });

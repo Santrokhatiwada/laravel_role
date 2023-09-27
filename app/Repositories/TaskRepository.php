@@ -39,12 +39,14 @@ class TaskRepository implements TaskRepositoryInterface
             'user_id' => $data['user_id'],
         ]);
        
+     
         $taskName= $task['task_name'];
         $status = 'created';
         $user = User::find($data['user_id']);
+       
     
         // Use the Mail facade to send a test email notification
-        Notification::send($user, new TaskNotification($status,$taskName));   
+        Notification::send($user, new TaskNotification($status,$taskName,$user));   
 
         return $task;
     }
@@ -107,15 +109,17 @@ class TaskRepository implements TaskRepositoryInterface
         
             $user = User::find($task['assigner_id']);
          
-        
+            $taskUser= User::find($data['user_id']);
             
-            Notification::send($user, new TaskNotification($status,$taskName));
+      
+            
+            Notification::send($user, new TaskNotification($status,$taskName,$taskUser));
         }
 
         if ($data['new_status'] == 'accepted' || $data['new_status'] == 'rejected') {
             $status = $data['new_status'];
             $user = User::find($data['user_id']);
-            Notification::send($user, new TaskNotification($status,$taskName));
+            Notification::send($user, new TaskNotification($status,$taskName,$user));
         }
 
 
