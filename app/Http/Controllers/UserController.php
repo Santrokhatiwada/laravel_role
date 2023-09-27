@@ -135,6 +135,7 @@ class UserController extends Controller
 
     public function logActivity(){
         $activityLogs = Activity::all();  
+        
 
         return view('activity-logs.index', compact('activityLogs'));
     }

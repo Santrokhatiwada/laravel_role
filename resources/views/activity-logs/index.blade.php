@@ -26,7 +26,7 @@
                                 <tr>
                                     <td>{{ $log->id }}</td>
                                     <td>{{ $log->description }}</td>
-                                    <td>{{ $log->causer->name  }}</td>
+                                    <td>{{ $log->causer->name ?? "system" }}</td>
                                 
                                     <td>{{$log->subject_type}}</td>
                                     <td>{{ Carbon\Carbon::parse($log->updated_at)->diffForHumans() }}</td>

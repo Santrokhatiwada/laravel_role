@@ -28,9 +28,13 @@ class User extends Authenticatable
         'password',
     ];
 
-    public function task()
+    public function tasks()
     {
-        return $this->hasMany(Task::class);
+        return $this->hasMany(TaskUser::class);
+    }
+
+    public function userTask(){
+        return $this->hasManyThrough(Task::class, TaskUser::class, 'user_id','id','id','task_id');
     }
 
     public function getActivitylogOptions(): LogOptions

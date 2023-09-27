@@ -23,7 +23,12 @@ class PermissionTableSeeder extends Seeder
             'product-list',
             'product-create',
             'product-edit',
-            'product-delete'
+            'product-delete',
+            'task-list',
+            'task-create',
+            'task-edit',
+            'task-delete',
+
          ];
       
          foreach ($permissions as $permission) {
