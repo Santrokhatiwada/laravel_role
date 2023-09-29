@@ -20,7 +20,7 @@ class TaskRepository implements TaskRepositoryInterface
         $task = Task::with('taskUser', 'statuses')
             ->latest()
             ->paginate(10);
-
+         
 
         return $task;
     }

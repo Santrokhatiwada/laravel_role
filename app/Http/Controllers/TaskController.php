@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Notifications\TaskNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 
 use Spatie\ModelStatus\Status;
@@ -31,18 +32,19 @@ class TaskController extends Controller
     {
 
         $tasks = $this->taskRepository->getAllTasks();
+    //     $taskIds = [];
+    // foreach ($tasks as $task) {
+    //     $taskIds[] = $task->id;
+    // }
+  
 
-        $allpending = Status::where('name', 'pending')
-            ->orderBy('id', 'DESC')->get();
+   
+ 
 
-        $allprogress = Status::whereIn('name', ['on-prgoress'])->get();
-        $allcompleted = Status::whereIn('name', ['completed'])->get();
-        $allaccepted = Status::whereIn('name', ['accepted'])->get();
-        $allrejected = Status::whereIn('name', ['rejected'])->get();
+    
+        
 
-
-
-        return view('tasks.index', compact('tasks', 'allpending', 'allprogress', 'allcompleted', 'allaccepted', 'allrejected'));
+        return view('tasks.index', compact('tasks', ));
     }
 
     /**
