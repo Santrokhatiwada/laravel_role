@@ -71,20 +71,26 @@ class TaskRepository implements TaskRepositoryInterface
 
     public function updateTask($id, $data)
     {
+
+         
         $task = Task::find($id);
      
 
 
 
         $task->update($data);
-       
+      
+      
 
-        if (isset($data['new_status']) && in_array($data['new_status'], ['on-progress', 'completed', 'accepted', 'rejected'])) {
+        if (isset($data['new_status']) && in_array($data['new_status'], ['pending','on-progress', 'completed', 'accepted'])) {
             // Update the status to the new value
 
             $task->setStatus($data['new_status']);
 
         }
+
+      
+
       
 
         // Check if the user_id is provided and different from the existing assignment
@@ -116,7 +122,7 @@ class TaskRepository implements TaskRepositoryInterface
             Notification::send($user, new TaskNotification($status,$taskName,$taskUser));
         }
 
-        if ($data['new_status'] == 'accepted' || $data['new_status'] == 'rejected') {
+        if ($data['new_status'] == 'accepted' ) {
             $status = $data['new_status'];
             $user = User::find($data['user_id']);
             Notification::send($user, new TaskNotification($status,$taskName,$user));

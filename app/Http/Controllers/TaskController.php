@@ -78,6 +78,8 @@ class TaskController extends Controller
 
         ]);
 
+       
+
         $data['assigner_id'] = intval($request->assigner_id);
         $data['user_id'] = intval($request->user_id);
 
@@ -133,16 +135,19 @@ class TaskController extends Controller
     public function update(Request $request, $id)
     {
 
+       
+
         $data = $request->validate([
             'task_name' => 'nullable',
             'description' => 'nullable',
-            'assigner_id' => 'integer',
+            'assigner_id' => 'nullable',
             'user_id' => 'nullable',
             'deadline' => 'nullable',
             'new_status' => 'required',
 
         ]);
 
+     
 
         // $data['assigner_id'] = intval($request->assigner_id);
 
@@ -152,6 +157,7 @@ class TaskController extends Controller
 
         $task = $this->taskRepository->updateTask($id, $data);
 
+   
         return redirect()->route('tasks.index', compact('task'));
     }
 

@@ -24,6 +24,7 @@
                             <meta name="viewport" content="width=device-width, initial-scale=1">
                             <meta name="csrf-token" content="{{ csrf_token() }}">
                             <title>Task management</title>
+                            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
                             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
                             <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
                             <style>
@@ -32,10 +33,20 @@
                                     height: 150px;
                                     padding: 0.5em;
                                 }
+
+                                #eye {
+                                    margin-left: 60px;
+                                }
+
+                              
+                                
                             </style>
                         </head>
 
                         <body class="bg-light">
+
+
+
                             <div class="container">
 
                                 <div class="col-md-12">
@@ -58,7 +69,22 @@
 
                                                             @if($task->statuses->last()->name=='pending')
 
-                                                            <li class="list-group-item" task-id="{{ $task->id }}">{{ $task->task_name }}</li>
+                                                            <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
+
+
+
+                                                                <a href="{{ route('tasks.show', $task->id) }}">
+                                                                    <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
+                                                                </a>
+                                                                @can('task-edit')
+                                                                @include('tasks.threedot')
+                                                                @endcan
+
+
+
+
+
+                                                            </li>
                                                             @else
                                                             @endif
                                                             @endif
@@ -67,7 +93,6 @@
 
 
 
-                                                           
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -81,13 +106,24 @@
                                                     </div>
                                                     <div class="card-body">
                                                         <ul class="list-group connectedSortable shadow-lg" id="on-progress-item-drop">
-                                                           
-                                                        @foreach($tasks as $task)
+
+                                                            @foreach($tasks as $task)
                                                             @if($task->statuses->isNotEmpty())
 
                                                             @if($task->statuses->last()->name=='on-progress')
 
-                                                            <li class="list-group-item" task-id="{{ $task->id }}">{{ $task->task_name }}</li>
+                                                            <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
+                                                        
+                                                            <a href="{{ route('tasks.show', $task->id) }}">
+                                                                    <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
+                                                                </a>
+                                                                @can('task-edit')
+                                                                @include('tasks.threedot')
+                                                                @endcan
+                                                        </li>
+
+                                                                          
+
                                                             @else
                                                             @endif
                                                             @endif
@@ -107,13 +143,21 @@
                                                     </div>
                                                     <div class="card-body">
                                                         <ul class="list-group  connectedSortable" id="completed-item-drop">
-                                                           
-                                                        @foreach($tasks as $task)
+
+                                                            @foreach($tasks as $task)
                                                             @if($task->statuses->isNotEmpty())
 
                                                             @if($task->statuses->last()->name=='completed')
 
-                                                            <li class="list-group-item" task-id="{{ $task->id }}">{{ $task->task_name }}</li>
+                                                            <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
+                                                        
+                                                            <a href="{{ route('tasks.show', $task->id) }}">
+                                                                    <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
+                                                                </a>
+                                                                @can('task-edit')
+                                                                @include('tasks.threedot')
+                                                                @endcan
+                                                        </li>
                                                             @else
                                                             @endif
                                                             @endif
@@ -129,13 +173,24 @@
                                                     </div>
                                                     <div class="card-body">
                                                         <ul class="list-group  connectedSortable" id="accepted-item-drop">
-                                                          
-                                                        @foreach($tasks as $task)
+
+                                                            @foreach($tasks as $task)
                                                             @if($task->statuses->isNotEmpty())
 
                                                             @if($task->statuses->last()->name=='accepted')
 
-                                                            <li class="list-group-item" task-id="{{ $task->id }}">{{ $task->task_name }}</li>
+                                                            <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
+                                                           
+                                                          
+                                                            <a href="{{ route('tasks.show', $task->id) }}">
+                                                                    <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
+                                                                </a>
+                                                                @can('task-edit')
+                                                                @include('tasks.threedot')
+                                                                @endcan
+                                                               
+
+                                                        </li>
                                                             @else
                                                             @endif
                                                             @endif
@@ -165,64 +220,74 @@
         </div>
     </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<!-- <script>
+    function onTaskNameClick(taskId) {
+        alert('Task ID: ' + taskId); // You can replace this with your desired action
+    }
+</script> -->
 <script>
     $(function() {
-        $("#pending-item-drop,#on-progress-item-drop ,#completed-item-drop ,#accepted-item-drop").sortable({
+        var newStatus = ""; // Initialize newStatus as an empty string
+
+        var columnStatusMapping = {
+            'pending-item-drop': 'pending',
+            'on-progress-item-drop': 'on-progress',
+            'completed-item-drop': 'completed',
+            'accepted-item-drop': 'accepted'
+        };
+
+        var isUserInteraction = true;
+
+        $("#pending-item-drop, #on-progress-item-drop, #completed-item-drop, #accepted-item-drop").sortable({
             connectWith: ".connectedSortable",
             opacity: 0.5,
-        });
-        $(".connectedSortable").on("sortupdate", function(event, ui) {
-            var pending = [];
-            var progress=[];
-            var completed=[];
-            var accepted = [];
-            $("#pending-item-drop li").each(function(index) {
-                if ($(this).attr('item-id')) {
-                    // console.log('drag from');
-                    pending[index] = $(this).attr('task-id');
+            start: function(event, ui) {
+                // Set the flag to true when user interaction starts
+                isUserInteraction = true;
+            },
+            update: function(event, ui) {
+                if (isUserInteraction) {
+                    var taskId = ui.item.attr("task-id");
+                    var columnId = ui.item.closest("ul").attr("id");
+                    var newStatus = columnStatusMapping[columnId];
+                    $.ajax({
+                        url: "/tasks/" + taskId,
+                        method: "PATCH",
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                        },
+                        data: {
+                            new_status: newStatus,
+                        },
+                        success: function(data) {
+                            console.log("Task status updated successfully.");
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error updating task status: " + error);
+                        },
+                    });
                 }
-            });
-            $("#on-progress-item-drop li").each(function(index) {
-                accept[index] = $(this).attr('task-id');
-                // console.log('ffsssf');
-
-            });
-            $("#completed-item-drop li").each(function(index) {
-                progress[index] = $(this).attr('task-id');
-                // console.log('ffsssf');
-
-            });
-
-            $("#accepted-item-drop li").each(function(index) {
-                accepted[index] = $(this).attr('task-id');
-                // console.log('ffsssf');
-
-            });
-
-
-            $.ajax({
-
-                url: "{{ route('tasks.update',21) }}",
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    pending: pending,
-                    accept: accept
-                },
-                success: function(data) {
-                    console.log('success');
-                }
-
-            });
-
+                // Reset the flag after handling user interaction
+                isUserInteraction = true;
+            },
+            receive: function(event, ui) {
+                // Set the flag to false when a task is received from another list
+                isUserInteraction = false;
+            }
         });
+
+
     });
 </script>
+
+
+
+<!-- for three dot  drop-down feature -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 
 
@@ -308,10 +373,5 @@
     @endif
     @endforeach
 </table>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
+
 @endsection

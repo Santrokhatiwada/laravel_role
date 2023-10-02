@@ -13,6 +13,8 @@
                         <a class="btn btn-primary" href="{{ route('tasks.index') }}"> Back </a>
                     </div>
 
+                 
+                   
                     @if ($errors->any())
                     <div class="alert alert-danger">
                         <strong>Whoops!</strong> Something went wrong.<br><br>
@@ -42,12 +44,12 @@
                                     <div class="form-group">
                                         <strong>Task Description:
                                         </strong>
-                                        <textarea class="form-control" style="height:150px" value="{{ $task->description }}" name="description" placeholder="Task Description"></textarea>
+                                        <textarea class="form-control" style="height: 150px" name="description" placeholder="Task Description">{{ $task->description }}</textarea>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="deadline">Deadline:</label>
-                                            <input type="datetime-local" name="deadline" class="form-control">
+                                            <input type="datetime-local" name="deadline" class="form-control" value="{{$task->deadline}}">
                                         </div>
                                     </div>
 
@@ -60,8 +62,7 @@
                                                 @foreach($user as $user)
 
 
-                                                <option value="{{$user->id}}">{{$user->name}}</option>
-                                                @endforeach
+                                                <option value="{{$user->id}}"  {{ $user->id == $task->taskUser->id ? 'selected' : '' }}>{{$user->name}}</option>                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -90,15 +91,14 @@
                                                 @endrole
                                                 <select name="new_status" id="new_status" class="form-control">
                                                     <option value="" disabled selected>Status</option>
-                                                    @role('User')
-                                                    <option value="pending" disabled selected>Pending</option>
-                                                    <option value="on-progress">On Progress</option>
-                                                    <option value="completed">Completed</option>
-                                                    @endrole
-                                                    @role('SuperAdmin')
-                                                    <option value="accepted">Accepted</option>
-                                                    <option value="rejected">Rejected</option>
-                                                    @endrole
+                                                   
+                                                    <option value="pending" {{ $task->statuses->last()->name == 'pending' ? 'selected' : '' }}>Pending</option>
+                                                    <option value="on-progress" {{ $task->statuses->last()->name == 'on-progress' ? 'selected' : '' }}>On Progress</option>
+                                                    <option value="completed"{{ $task->statuses->last()->name == 'completed' ? 'selected' : '' }}>Completed</option>
+                                                   
+                                                    <option value="accepted"{{ $task->statuses->last()->name == 'accepted' ? 'selected' : '' }}>Accepted</option>
+                                                   
+                                                
                                                 </select>
                                             </div>
 
