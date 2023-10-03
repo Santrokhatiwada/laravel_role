@@ -11,5 +11,6 @@ interface TaskRepositoryInterface
     public function updateTask($id, $data);
     public function deleteTask($id);
     public function updateUser($id,$data);
+    public function getProfile($id);
     
 }

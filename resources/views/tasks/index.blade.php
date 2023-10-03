@@ -38,8 +38,23 @@
                                     margin-left: 60px;
                                 }
 
-                              
-                                
+                                .circle {
+                                    display: inline-block;
+                                    background-color: black;
+
+                                    border-radius: 50%;
+                                }
+
+                                .circle-inner {
+                                    color: white;
+                                    display: table-cell;
+                                    vertical-align: middle;
+                                    text-align: center;
+                                    text-decoration: none;
+                                    height: 80px;
+                                    width: 60px;
+                                    font-size: 30px;
+                                }
                             </style>
                         </head>
 
@@ -51,6 +66,35 @@
 
                                 <div class="col-md-12">
                                     <h2 class="text-center pb-3 pt-1">Task Management</h2>
+
+                                    @foreach($users as $user)
+
+
+
+
+                                    @if($user->userTask->count() > 0)
+                                    <!-- <a href="tasks" onclick="userId('{{$user->id}}')"> -->
+                                    <a href="javascript:void(0);" class="user-image" data-user-name="{{ $user->name}}" data-user-id="{{ $user->id }}">
+
+                                        @if(!empty($user->image))
+
+                                        <div class="circle">
+                                            <img height="80px" class="rounded-circle shadow-4-strong circle-inner " alt="avatar2" src="{{ asset('uploads/usersImage/' . $user->image) }}">
+                                        </div>
+                                        @else
+                                        <!-- No photo -->
+
+                                        <div class="circle">
+                                            <p class="circle-inner">{{ substr($user->name, 0, 1) }}{{ substr($user->name, strpos($user->name, ' ') + 1, 1) }}</p>
+                                        </div>
+                                        @endif
+                                    </a>
+                                    @endif
+
+                                    @endforeach
+
+
+
                                     <div class="row ">
                                         <div class="d-flex overflow-scroll">
                                             <div class="col-md-3 ">
@@ -59,12 +103,14 @@
                                                     <div class="card-header bg-secondary text-white">
                                                         <h1>To Do</h1>
                                                     </div>
-                                                    <div class="card-body">
+                                                    <div class="card-body-pending">
                                                         <ul class="list-group connectedSortable shadow-lg" id="pending-item-drop">
 
 
 
                                                             @foreach($tasks as $task)
+                                                            @if(Auth::user()->hasRole('SuperAdmin') || (Auth::user()->hasRole('User') && optional($task->taskUser)->id === Auth::id() ))
+
                                                             @if($task->statuses->isNotEmpty())
 
                                                             @if($task->statuses->last()->name=='pending')
@@ -88,6 +134,7 @@
                                                             @else
                                                             @endif
                                                             @endif
+                                                            @endif
                                                             @endforeach
 
 
@@ -104,27 +151,30 @@
 
                                                         <h2>On-Progress</h2>
                                                     </div>
-                                                    <div class="card-body">
+                                                    <div class="card-body-on-progress">
                                                         <ul class="list-group connectedSortable shadow-lg" id="on-progress-item-drop">
 
                                                             @foreach($tasks as $task)
+                                                            @if(Auth::user()->hasRole('SuperAdmin') || (Auth::user()->hasRole('User') && optional($task->taskUser)->id === Auth::id()))
+
                                                             @if($task->statuses->isNotEmpty())
 
                                                             @if($task->statuses->last()->name=='on-progress')
 
                                                             <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
-                                                        
-                                                            <a href="{{ route('tasks.show', $task->id) }}">
+
+                                                                <a href="{{ route('tasks.show', $task->id) }}">
                                                                     <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
                                                                 </a>
                                                                 @can('task-edit')
                                                                 @include('tasks.threedot')
                                                                 @endcan
-                                                        </li>
+                                                            </li>
 
-                                                                          
+
 
                                                             @else
+                                                            @endif
                                                             @endif
                                                             @endif
                                                             @endforeach
@@ -141,24 +191,27 @@
                                                     <div class="card-header bg-info text-white">
                                                         <h1>Review</h1>
                                                     </div>
-                                                    <div class="card-body">
+                                                    <div class="card-body-completed">
                                                         <ul class="list-group  connectedSortable" id="completed-item-drop">
 
                                                             @foreach($tasks as $task)
+                                                            @if(Auth::user()->hasRole('SuperAdmin') || (Auth::user()->hasRole('User') && optional($task->taskUser)->id === Auth::id()))
+
                                                             @if($task->statuses->isNotEmpty())
 
                                                             @if($task->statuses->last()->name=='completed')
 
                                                             <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
-                                                        
-                                                            <a href="{{ route('tasks.show', $task->id) }}">
+
+                                                                <a href="{{ route('tasks.show', $task->id) }}">
                                                                     <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
                                                                 </a>
                                                                 @can('task-edit')
                                                                 @include('tasks.threedot')
                                                                 @endcan
-                                                        </li>
+                                                            </li>
                                                             @else
+                                                            @endif
                                                             @endif
                                                             @endif
                                                             @endforeach
@@ -171,27 +224,30 @@
                                                     <div class="card-header bg-success text-white">
                                                         <h1>Done</h1>
                                                     </div>
-                                                    <div class="card-body">
+                                                    <div class="card-body-accepted">
                                                         <ul class="list-group  connectedSortable" id="accepted-item-drop">
 
                                                             @foreach($tasks as $task)
+                                                            @if(Auth::user()->hasRole('SuperAdmin') || (Auth::user()->hasRole('User') && optional($task->taskUser)->id === Auth::id()))
+
                                                             @if($task->statuses->isNotEmpty())
 
                                                             @if($task->statuses->last()->name=='accepted')
 
                                                             <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
-                                                           
-                                                          
-                                                            <a href="{{ route('tasks.show', $task->id) }}">
+
+
+                                                                <a href="{{ route('tasks.show', $task->id) }}">
                                                                     <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
                                                                 </a>
                                                                 @can('task-edit')
                                                                 @include('tasks.threedot')
                                                                 @endcan
-                                                               
 
-                                                        </li>
+
+                                                            </li>
                                                             @else
+                                                            @endif
                                                             @endif
                                                             @endif
                                                             @endforeach
@@ -284,6 +340,134 @@
     });
 </script>
 
+<!-- for passing user id on click of photo -->
+<!-- 
+<script>
+
+  
+function userId(id)
+{
+   
+    $.ajax({
+                        url: "/tasks" ,
+                        method: "GET",
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                        },
+                        // data: {
+                        //     id: id,
+                        // },
+                        success: function(data) {
+                            console.log("Tasks shown successfully. " + data);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error showing tasks: " + error);
+                        },
+                    });
+
+}
+</script> -->
+<script>
+function individual_task(task) {
+    return `
+        <li class="list-group-item" task-id="${task.id}" onclick="onTaskNameClick('${task.id}')">
+            ${task.task_name}
+            <a href="/tasks/${task.id}">
+                <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
+            </a>
+            <i id="threeDot" class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
+            <ul class="dropdown-menu">
+                <li>
+                    <span class="dropdown-item">
+                        <a href="/tasks/${task.id}/edit">
+                            <i class="fas fa-pen mx-2"></i> 
+                            <button class="btn btn-primary">Update</button>
+                        </a>
+                    </span>
+                </li>
+                <li>
+                    <span class="dropdown-item">
+                      
+                        <i class="fas fa-trash mx-2"></i>
+                        <form method="POST" action="/tasks/${task.id}" style="display:inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                      
+                    </span>
+                </li>
+            </ul>
+        </li>`;
+}
+
+
+
+    $(function() {
+        $(".user-image").click(function() {
+            var userId = $(this).data("user-id");
+            var user_name = $(this).data("user-name");
+
+            // Make an AJAX request to fetch tasks assigned to the user
+            $.ajax({
+                url: "/tasks/user/" + userId, // Update the URL to match your route
+                method: "GET",
+                success: function(data) {
+
+                    console.log("Tasks assigned to user with ID " + userId, data);
+                    $('#indivisual_user_name').text("Task's of: " + user_name);
+                    const pendingTasks = data.filter(function(task) {
+                        return task.status === 'pending';
+                    });
+                    const on_progress_task = data.filter(function(task) {
+                        return task.status === 'on-progress';
+                    });
+                    const completedTask = data.filter(function(task) {
+                        return task.status === 'completed';
+                    });
+                    const acceptedTasks = data.filter(function(task) {
+                        return task.status === 'accepted';
+                    });
+
+
+
+                    $("#pending-item-drop").empty();
+                    $("#on-progress-item-drop").empty();
+                    $("#completed-item-drop").empty();
+                    $("#accepted-item-drop").empty();
+
+                    pendingTasks.forEach(task => {
+                        if (task) {
+                            $('#pending-item-drop').append(individual_task(task));
+                        }
+                    });
+                    completedTask.forEach(task => {
+                        if (task) {
+                            $('#completed-item-drop').append(individual_task(task));
+                        }
+                    });
+                    on_progress_task.forEach(task => {
+                        if (task) {
+                            $('#on-progress-item-drop').append(individual_task(task));
+
+                        }
+                    });
+                    acceptedTasks.forEach(task => {
+                        if (task) {
+                            $('#accepted-item-drop').append(individual_task(task));
+
+                        }
+                    });
+
+
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error loading tasks: " + error);
+                }
+            });
+        });
+    });
+</script>
 
 
 <!-- for three dot  drop-down feature -->

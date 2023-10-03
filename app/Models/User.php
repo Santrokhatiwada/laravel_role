@@ -26,13 +26,14 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'image',
     ];
 
     public function tasks()
     {
         return $this->hasMany(TaskUser::class);
     }
-
+   
     public function userTask(){
         return $this->hasManyThrough(Task::class, TaskUser::class, 'user_id','id','id','task_id');
     }

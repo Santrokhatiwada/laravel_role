@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Activitylog\Models\Activity;
@@ -13,8 +14,18 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+
+
+    function __construct()
+    {
+         $this->middleware('permission:user-list|user-create|user-edit|user-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:user-create', ['only' => ['create','store']]);
+         $this->middleware('permission:user-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+    }
     public function index(Request $request)
     {
+       
         $data = User::orderBy('id','DESC')->paginate(5);
         return view('users.index',compact('data'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
@@ -43,7 +54,7 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
-            'roles' => 'required'
+            'roles' => 'required',
         ]);
       
         $input = $request->all();
@@ -99,21 +110,44 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'same:confirm-password',
-            'roles' => 'required'
+            'roles' => 'nullable',
+            'image' => 'sometimes|nullable|max:2048',
         ]);
     
         $input = $request->all();
+
         if(!empty($input['password'])){ 
             $input['password'] = Hash::make($input['password']);
         }else{
             $input = Arr::except($input,array('password'));    
         }
-    
+
+      
         $user = User::find($id);
+
+        $image=$request->image;
+        $dbname=null;
+       if($image){
+          if ($user->image){
+            unlink('uploads/users/'.$user->image);
+          }
+              $dbname= 'user-image-'.time().'.'.$image->clientExtension(); 
+              $source=$image->getRealPath();
+              $destination='uploads/usersImage/'.$dbname;
+              
+              copy($source,$destination);
+              $input['image'] = $dbname;
+          
+          }
+
+
         $user->update($input);
-        DB::table('model_has_roles')->where('model_id',$id)->delete();
+      
+        // DB::table('model_has_roles')->where('model_id',$id)->delete();
     
-        $user->assignRole($request->input('roles'));
+       if( Auth::user()->hasRole('SuperAdmin')){
+               $user->assignRole($request->input('roles'));
+       }
     
         return redirect()->route('users.index')
                         ->with('success','User updated successfully');
@@ -139,5 +173,16 @@ class UserController extends Controller
 
         return view('activity-logs.index', compact('activityLogs'));
     }
+
+    public function deleteImage($id)
+    {
+       $user=User::find($id);
+      unlink('uploads/usersImage/'.$user->image);
+      $user-> update(['image'=>null]);
+      
+        return back()
+                        ->with('success','Blog image deleted successfully');
+    }
+ 
 }
 

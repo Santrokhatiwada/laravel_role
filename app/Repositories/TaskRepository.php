@@ -21,8 +21,13 @@ class TaskRepository implements TaskRepositoryInterface
             ->latest()
             ->paginate(10);
          
+            $user = User::get();
 
-        return $task;
+
+            return [
+                'task' => $task,
+                'user' => $user,
+            ];
     }
 
     public function storeTask($data)
@@ -146,4 +151,28 @@ class TaskRepository implements TaskRepositoryInterface
         $task = Task::find($id);
         return $task->update($data);
     }
+
+
+    public function getProfile($id)
+    {
+        $user = User::find($id);
+        $tasks = $user->userTask()->get();
+        
+        
+    $taskUsers = $tasks->pluck('taskUser')->pluck('name')->toArray();
+    
+    $statuses = $tasks->pluck('statuses')->map->last()->pluck('name')->toArray();
+
+    $tasks = $tasks->map(function ($task, $key) use ($taskUsers, $statuses) {
+        $task['taskUser'] = $taskUsers[$key];
+        $task['status'] = $statuses[$key];
+        return $task;
+    });
+
+   
+
+    return $tasks;
+
+    }
+
 }

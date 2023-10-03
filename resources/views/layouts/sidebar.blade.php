@@ -27,8 +27,15 @@
     @endrole
 
     @role('User')
+    <li><a class="nav-link" href="{{ route('users.index')}}">My Profile</a></li>
+    @endrole
+
+    @role('User')
     <li><a class="nav-link" href="{{ route('tasks.index') }}">My Task</a></li>
     @endrole
+
+
+
 
 
    

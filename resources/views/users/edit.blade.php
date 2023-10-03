@@ -26,8 +26,8 @@
                         @endif
 
 
-                        {!! Form::model($user, ['method' => 'PATCH','route' => ['users.update', $user->id]]) !!}
-                        <div class="row">
+                        {!! Form::model($user, ['method' => 'PATCH', 'route' => ['users.update', $user->id], 'enctype' => 'multipart/form-data']) !!}
+                            <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
                                     <strong>Name:</strong>
@@ -52,12 +52,34 @@
                                     {!! Form::password('confirm-password', array('placeholder' => 'Confirm Password','class' => 'form-control')) !!}
                                 </div>
                             </div>
+
+                            @role('SuperAdmin')
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
                                     <strong>Role:</strong>
                                     {!! Form::select('roles[]', $roles,$userRole, array('class' => 'form-control','multiple')) !!}
                                 </div>
                             </div>
+                            @endrole
+
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <div class="form-group">
+                                    <strong>Select a profile picture:</strong>
+                                    <input class="form-control" type="file" id="formFile" name="image">
+                                    @if($user->image == NULL)
+                                    "No photo"
+                                    @elseif($user->image != NULL)
+                                    <td><img height="120px" src="{{ asset('uploads/usersImage/'.$user->image) }}"></td>
+
+                                    <a class="btn btn-info" href=# onclick="event.preventDefault();document.getElementById('delete-image-form').submit();">Delete the image</a>
+
+                                    @endif
+
+                                </div>
+                            </div>
+
+
+
                             <div class="col-xs-12 col-sm-12 col-md-12 text-center">
                                 <button type="submit" class="btn btn-primary">Submit</button>
                             </div>
@@ -69,6 +91,12 @@
     </div>
 </div>
 {!! Form::close() !!}
+
+<form action="{{ route('users.deleteImage',$user->id) }}" method="POST" id="delete-image-form">
+    @csrf
+                      @method('DELETE')
+                     
+</form>
 
 
 @endsection

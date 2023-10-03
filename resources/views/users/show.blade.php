@@ -27,6 +27,22 @@
                                     {{ $user->email }}
                                 </div>
                             </div>
+
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <div class="form-group">
+                                    <strong>Image:</strong>
+                                    
+                             @if(!empty($user->image))
+                                    <img height="80px" class="rounded-circle shadow-4-strong" alt="avatar2"  src="{{ asset('uploads/usersImage/' . $user->image) }}">
+                                    @else
+                                    No photo
+                                    @endif
+                                
+                                </div>
+                            </div>
+
+
+
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
                                     <strong>Roles:</strong>

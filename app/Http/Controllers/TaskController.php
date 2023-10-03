@@ -31,20 +31,28 @@ class TaskController extends Controller
     public function index()
     {
 
-        $tasks = $this->taskRepository->getAllTasks();
-    //     $taskIds = [];
-    // foreach ($tasks as $task) {
-    //     $taskIds[] = $task->id;
-    // }
-  
+        $result = $this->taskRepository->getAllTasks();
 
-   
- 
+        $tasks = $result['task'];
+        $users = $result['user'];
 
-    
-        
+        //     $taskIds = [];
+        // foreach ($tasks as $task) {
+        //     $taskIds[] = $task->id;
+        // }
 
-        return view('tasks.index', compact('tasks', ));
+
+
+
+
+        if (request()->expectsJson()) {
+            return response()->json(['tasks' => $tasks, 'users' => $users]);
+        } else {
+            return view('tasks.index', compact('tasks', 'users'));
+        }
+
+
+        // return view('tasks.index', compact('tasks','users' ));
     }
 
     /**
@@ -78,7 +86,7 @@ class TaskController extends Controller
 
         ]);
 
-       
+
 
         $data['assigner_id'] = intval($request->assigner_id);
         $data['user_id'] = intval($request->user_id);
@@ -135,7 +143,7 @@ class TaskController extends Controller
     public function update(Request $request, $id)
     {
 
-       
+
 
         $data = $request->validate([
             'task_name' => 'nullable',
@@ -147,7 +155,7 @@ class TaskController extends Controller
 
         ]);
 
-     
+
 
         // $data['assigner_id'] = intval($request->assigner_id);
 
@@ -157,7 +165,7 @@ class TaskController extends Controller
 
         $task = $this->taskRepository->updateTask($id, $data);
 
-   
+
         return redirect()->route('tasks.index', compact('task'));
     }
 
@@ -207,29 +215,39 @@ class TaskController extends Controller
     {
 
 
-        if (Auth::user()->getRoleNames()->contains('SuperAdmin')){
+        if (Auth::user()->getRoleNames()->contains('SuperAdmin')) {
             $notifications = [];
 
             $users = User::all();
 
             foreach ($users as $user) {
                 $userNotifications = $user->notifications
-                    ->where('notifiable_id','=' ,Auth::id())
+                    ->where('notifiable_id', '=', Auth::id())
                     ->pluck('data')
                     ->toArray();
-    
+
                 $notifications = array_merge($notifications, $userNotifications);
             }
             return response()->json($notifications);
         }
 
-        if (Auth::user()->getRoleNames()->contains('User')){
+        if (Auth::user()->getRoleNames()->contains('User')) {
 
             $notifications = Auth::user()->notifications->pluck('data');
-          
+
 
 
             return response()->json($notifications);
         }
+    }
+
+
+
+    public function profile($userId)
+    {
+
+        $tasks = $this->taskRepository->getProfile($userId);
+        return $tasks;
+       
     }
 }

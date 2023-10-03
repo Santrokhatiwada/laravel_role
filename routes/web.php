@@ -34,6 +34,9 @@ Route::group(['middleware'=>['auth']],function(){
     Route::resource('products', ProductController::class);
     Route::resource('tasks', TaskController::class);
 
+    Route::delete('/user/deleteImage/{id}', [UserController::class, 'deleteImage'])->name('users.deleteImage');
+    
+    Route::get('/tasks/user/{userId}',[TaskController::class,'profile']);
 
 Route::get('notifications',[TaskController::class,'taskNotification'])->name('notifications');
 

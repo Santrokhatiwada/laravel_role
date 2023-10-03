@@ -42,12 +42,12 @@
                             </div>
 
 
-                            <div class="col-xs-12 col-sm-12 col-md-12">
+                            <!-- <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
                                     <strong>Assigned by:</strong>
                                     {{Auth::user()->name}}
                                 </div>
-                            </div>
+                            </div> -->
 
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
