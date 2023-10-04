@@ -79,6 +79,22 @@
                                     </div>
                                 </div>
                             </div>
+
+
+
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <div class="form-group">
+                                <label for="priority_order">Priority:</label>
+                                    <select name="priority" class="form-control">
+                                        <option value="" disabled selected>Select to Task Priority</option>
+                                      
+                                        <option value="high-priority" {{$task->priority == 'high-priority' ? 'selected' : ''}}>High-Priority</option>
+                                        <option value="medium-priority" {{$task->priority == 'medium-priority' ? 'selected' : ''}}>Medium-Priority</option>
+                                        <option value="low-priority" {{$task->priority == 'low-priority' ? 'selected' : ''}}>Low-Priority</option>
+                                       
+                                    </select>
+                                </div>
+                            </div>
                                         @endrole
    
                                         <div class="col-xs-12 col-sm-12 col-md-12">

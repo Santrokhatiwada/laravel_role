@@ -35,8 +35,13 @@
                                 }
 
                                 #eye {
-                                    margin-left: 60px;
+                                    margin-left: 5px;
                                 }
+                                #priority{
+                                    margin-left: 40px;
+                                }
+
+                                
 
                                 .circle {
                                     display: inline-block;
@@ -54,6 +59,10 @@
                                     height: 80px;
                                     width: 60px;
                                     font-size: 30px;
+                                }
+
+                                .col-md-3 {
+                                    display: grid;
                                 }
                             </style>
                         </head>
@@ -103,7 +112,7 @@
                                                     <div class="card-header bg-secondary text-white">
                                                         <h1>To Do</h1>
                                                     </div>
-                                                    <div class="card-body-pending">
+                                                    <div class="card-body empty-list" data-status="pending">
                                                         <ul class="list-group connectedSortable shadow-lg" id="pending-item-drop">
 
 
@@ -115,9 +124,18 @@
 
                                                             @if($task->statuses->last()->name=='pending')
 
+
+
                                                             <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
-
-
+                                                               
+                                                                    @if ($task->priority === 'high-priority')
+                                                                    <i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>
+                                                                    @elseif ($task->priority === 'medium-priority')
+                                                                    <i id="priority" class="fa-solid fa-m" style="color: #0056d6;"></i>
+                                                                    @elseif ($task->priority === 'low-priority')
+                                                                    <i id="priority"  class="fa-solid fa-l" style="color: #d4e3fe;"></i>
+                                                                    @endif
+                                                              
 
                                                                 <a href="{{ route('tasks.show', $task->id) }}">
                                                                     <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
@@ -151,7 +169,7 @@
 
                                                         <h2>On-Progress</h2>
                                                     </div>
-                                                    <div class="card-body-on-progress">
+                                                    <div class="card-body empty-list" data-status="on-progress">
                                                         <ul class="list-group connectedSortable shadow-lg" id="on-progress-item-drop">
 
                                                             @foreach($tasks as $task)
@@ -163,6 +181,14 @@
 
                                                             <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
 
+                                                            @if ($task->priority === 'high-priority')
+                                                                    <i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>
+                                                                    @elseif ($task->priority === 'medium-priority')
+                                                                    <i id="priority" class="fa-solid fa-m" style="color: #0056d6;"></i>
+                                                                    @elseif ($task->priority === 'low-priority')
+                                                                    <i id="priority"  class="fa-solid fa-l" style="color: #d4e3fe;"></i>
+                                                                    @endif
+                                                              
                                                                 <a href="{{ route('tasks.show', $task->id) }}">
                                                                     <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
                                                                 </a>
@@ -191,7 +217,7 @@
                                                     <div class="card-header bg-info text-white">
                                                         <h1>Review</h1>
                                                     </div>
-                                                    <div class="card-body-completed">
+                                                    <div class="card-body empty-list" data-status="completed">
                                                         <ul class="list-group  connectedSortable" id="completed-item-drop">
 
                                                             @foreach($tasks as $task)
@@ -203,6 +229,14 @@
 
                                                             <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
 
+                                                            @if ($task->priority === 'high-priority')
+                                                                    <i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>
+                                                                    @elseif ($task->priority === 'medium-priority')
+                                                                    <i id="priority" class="fa-solid fa-m" style="color: #0056d6;"></i>
+                                                                    @elseif ($task->priority === 'low-priority')
+                                                                    <i id="priority"  class="fa-solid fa-l" style="color: #d4e3fe;"></i>
+                                                                    @endif
+                                                              
                                                                 <a href="{{ route('tasks.show', $task->id) }}">
                                                                     <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
                                                                 </a>
@@ -224,7 +258,7 @@
                                                     <div class="card-header bg-success text-white">
                                                         <h1>Done</h1>
                                                     </div>
-                                                    <div class="card-body-accepted">
+                                                    <div class="card-body empty-list" data-status="accepted">
                                                         <ul class="list-group  connectedSortable" id="accepted-item-drop">
 
                                                             @foreach($tasks as $task)
@@ -237,6 +271,14 @@
                                                             <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
 
 
+                                                            @if ($task->priority === 'high-priority')
+                                                                    <i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>
+                                                                    @elseif ($task->priority === 'medium-priority')
+                                                                    <i id="priority" class="fa-solid fa-m" style="color: #0056d6;"></i>
+                                                                    @elseif ($task->priority === 'low-priority')
+                                                                    <i id="priority"  class="fa-solid fa-l" style="color: #d4e3fe;"></i>
+                                                                    @endif
+                                                              
                                                                 <a href="{{ route('tasks.show', $task->id) }}">
                                                                     <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
                                                                 </a>
@@ -289,17 +331,21 @@
     $(function() {
         var newStatus = ""; // Initialize newStatus as an empty string
 
-        var columnStatusMapping = {
-            'pending-item-drop': 'pending',
-            'on-progress-item-drop': 'on-progress',
-            'completed-item-drop': 'completed',
-            'accepted-item-drop': 'accepted'
-        };
+        // var columnStatusMapping = {
+        //     'pending-item-drop': 'pending',
+        //     'on-progress-item-drop': 'on-progress',
+        //     'completed-item-drop': 'completed',
+        //     'accepted-item-drop': 'accepted',
+
+
+        // };
 
         var isUserInteraction = true;
 
-        $("#pending-item-drop, #on-progress-item-drop, #completed-item-drop, #accepted-item-drop").sortable({
-            connectWith: ".connectedSortable",
+
+
+        $("#pending-item-drop, #on-progress-item-drop, #completed-item-drop, #accepted-item-drop,.empty-list").sortable({
+            connectWith: ".connectedSortable,.card-body",
             opacity: 0.5,
             start: function(event, ui) {
                 // Set the flag to true when user interaction starts
@@ -308,8 +354,14 @@
             update: function(event, ui) {
                 if (isUserInteraction) {
                     var taskId = ui.item.attr("task-id");
-                    var columnId = ui.item.closest("ul").attr("id");
-                    var newStatus = columnStatusMapping[columnId];
+
+                    // var columnId = $("#completed-empty").attr("id");
+                    var newStatus = ui.item.closest(".empty-list").data("status");
+
+                    // console.log("Column ID: " + columnId);
+                    // var newStatus = columnStatusMapping[columnId];
+                    console.log("Task ID: " + taskId);
+                    console.log("New Status: " + newStatus);
                     $.ajax({
                         url: "/tasks/" + taskId,
                         method: "PATCH",
@@ -333,43 +385,19 @@
             receive: function(event, ui) {
                 // Set the flag to false when a task is received from another list
                 isUserInteraction = false;
-            }
+            },
+
         });
+
 
 
     });
 </script>
 
 <!-- for passing user id on click of photo -->
-<!-- 
 <script>
-
-  
-function userId(id)
-{
-   
-    $.ajax({
-                        url: "/tasks" ,
-                        method: "GET",
-                        headers: {
-                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-                        },
-                        // data: {
-                        //     id: id,
-                        // },
-                        success: function(data) {
-                            console.log("Tasks shown successfully. " + data);
-                        },
-                        error: function(xhr, status, error) {
-                            console.error("Error showing tasks: " + error);
-                        },
-                    });
-
-}
-</script> -->
-<script>
-function individual_task(task) {
-    return `
+    function individual_task(task) {
+        return `
         <li class="list-group-item" task-id="${task.id}" onclick="onTaskNameClick('${task.id}')">
             ${task.task_name}
             <a href="/tasks/${task.id}">
@@ -399,7 +427,7 @@ function individual_task(task) {
                 </li>
             </ul>
         </li>`;
-}
+    }
 
 
 
@@ -512,6 +540,7 @@ function individual_task(task) {
         <th>Assigned by</th>
         @endrole
         <th>status</th>
+        <th>Priority</th>
         <th width="280px">Action</th>
     </tr>
     <?php $i = 0; ?>
@@ -544,6 +573,7 @@ function individual_task(task) {
         @endrole
 
         <td>{{$task->statuses->last()->name ?? 'No Status'}}</td>
+        <td>{{$task->priority}}</td>
         <td>
             <a class="btn btn-info" href="{{ route('tasks.show',$task->id) }}">Show</a>
             <a class="btn btn-primary" href="{{ route('tasks.edit',$task->id) }}">Edit</a>

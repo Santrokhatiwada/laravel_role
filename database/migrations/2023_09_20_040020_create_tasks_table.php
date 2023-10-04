@@ -18,6 +18,7 @@ return new class extends Migration
         $table->string('task_name');
         $table->text('description');
         $table->integer('assigner_id')->nullable();
+        $table->enum('priority',['high-priority','medium-priority','low-priority'])->default('low-priority');
       
         $table->dateTime('deadline')->nullable();
  

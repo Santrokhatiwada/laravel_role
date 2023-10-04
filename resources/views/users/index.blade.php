@@ -47,7 +47,7 @@
                                 </td>
 
                                 <td> @if(!empty($user->image))
-                                    <img height="80px" class="rounded-circle shadow-4-strong" alt="avatar2"  src="{{ asset('uploads/usersImage/' . $user->image) }}">
+                                    <img height="80px"   src="{{ asset('uploads/usersImage/' . $user->image) }}">
                                     @else
                                     No photo
                                     @endif

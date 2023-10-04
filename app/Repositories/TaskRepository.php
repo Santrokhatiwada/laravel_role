@@ -17,7 +17,7 @@ class TaskRepository implements TaskRepositoryInterface
 {
     public function getAllTasks()
     {
-        $task = Task::with('taskUser', 'statuses')
+        $task = Task::with('taskUser', 'statuses')->orderBy('priority', 'asc')
             ->latest()
             ->paginate(10);
          
@@ -80,7 +80,12 @@ class TaskRepository implements TaskRepositoryInterface
          
         $task = Task::find($id);
      
+       
 
+        if (!$task) {
+            // Handle the case where the task doesn't exist
+            return response()->json(['error' => 'Task not found'], 404);
+        }
 
 
         $task->update($data);

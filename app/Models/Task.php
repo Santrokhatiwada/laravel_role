@@ -19,7 +19,7 @@ class Task extends Model
     }
     
     protected $fillable = [
-        'task_name', 'description','deadline','status','assigner_id',
+        'task_name', 'description','deadline','status','assigner_id','priority',
     ];
    
 

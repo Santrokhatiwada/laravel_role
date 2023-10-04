@@ -63,6 +63,20 @@
 
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
+                                <label for="priority_order">Priority:</label>
+                                    <select name="priority" class="form-control">
+                                        <option value="" disabled selected>Select to Task Priority</option>
+                                      
+                                        <option value="high-priority">High-Priority</option>
+                                        <option value="medium-priority">Medium-Priority</option>
+                                        <option value="low-priority">Low-Priority</option>
+                                       
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <div class="form-group">
                                     <label for="assigner_select">Assigned by:</label>
                                     <select name="assigner_id" class="form-control">
                                         <option value="" disabled selected>Select Assigner</option>

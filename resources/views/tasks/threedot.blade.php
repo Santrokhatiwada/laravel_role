@@ -1,6 +1,6 @@
 <style>
 #threeDot {
-                                    margin-left: 6px;
+                                    margin-left: 2px;
 
                                 }
 

@@ -81,6 +81,7 @@ class TaskController extends Controller
             'assigner_id' => 'required|integer',
             'user_id' => 'nullable',
             'deadline' => 'nullable',
+            'priority'=>'nullable',
 
 
 
