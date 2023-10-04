@@ -34,6 +34,9 @@
                             $i = 0; // Initialize $i here
                             @endphp
                             @foreach ($data as $key => $user)
+
+                            @if(Auth::user()->hasRole('SuperAdmin') || (Auth::user()->hasRole('User') && optional($user)->id === Auth::id()))
+
                             <tr>
                                 <td>{{ ++$i }}</td>
                                 <td>{{ $user->name }}</td>
@@ -65,6 +68,7 @@
                                     @endcan
                                 </td>
                             </tr>
+                            @endif
                             @endforeach
                         </table>
 

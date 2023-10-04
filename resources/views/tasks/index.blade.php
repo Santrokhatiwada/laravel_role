@@ -56,7 +56,7 @@
                                     vertical-align: middle;
                                     text-align: center;
                                     text-decoration: none;
-                                    height: 80px;
+                                    height: 60px;
                                     width: 60px;
                                     font-size: 30px;
                                 }
@@ -397,37 +397,49 @@
 <!-- for passing user id on click of photo -->
 <script>
     function individual_task(task) {
-        return `
-        <li class="list-group-item" task-id="${task.id}" onclick="onTaskNameClick('${task.id}')">
-            ${task.task_name}
-            <a href="/tasks/${task.id}">
-                <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
-            </a>
-            <i id="threeDot" class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
-            <ul class="dropdown-menu">
-                <li>
-                    <span class="dropdown-item">
-                        <a href="/tasks/${task.id}/edit">
-                            <i class="fas fa-pen mx-2"></i> 
-                            <button class="btn btn-primary">Update</button>
-                        </a>
-                    </span>
-                </li>
-                <li>
-                    <span class="dropdown-item">
-                      
-                        <i class="fas fa-trash mx-2"></i>
-                        <form method="POST" action="/tasks/${task.id}" style="display:inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                      
-                    </span>
-                </li>
-            </ul>
-        </li>`;
+    let priorityIcon = '';  // Initialize an empty string for the priority icon HTML
+
+    // Determine the priority icon based on the task's priority
+    if (task.priority === 'high-priority') {
+        priorityIcon = '<i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>';
+    } else if (task.priority === 'medium-priority') {
+        priorityIcon = '<i id="priority" class="fa-solid fa-m" style="color: #0056d6;"></i>';
+    } else if (task.priority === 'low-priority') {
+        priorityIcon = '<i id="priority" class="fa-solid fa-l" style="color: #d4e3fe;"></i>';
     }
+
+    // Construct the individual task item with the priority icon
+    return `
+    <li class="list-group-item" task-id="${task.id}" onclick="onTaskNameClick('${task.id}')">
+        ${task.task_name}
+        ${priorityIcon}  <!-- Insert the priority icon here -->
+        <a href="/tasks/${task.id}">
+            <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
+        </a>
+        <i id="threeDot" class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
+        <ul class="dropdown-menu">
+            <li>
+                <span class="dropdown-item">
+                    <a href="/tasks/${task.id}/edit">
+                        <i class="fas fa-pen mx-2"></i> 
+                        <button class="btn btn-primary">Update</button>
+                    </a>
+                </span>
+            </li>
+            <li>
+                <span class="dropdown-item">
+                    <i class="fas fa-trash mx-2"></i>
+                    <form method="POST" action="/tasks/${task.id}" style="display:inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </span>
+            </li>
+        </ul>
+    </li>`;
+}
+
 
 
 

@@ -32,6 +32,15 @@ public function assignUser()
 {
     return $this->hasOne(TaskUser::class);
 }
+public function project()
+{
+    return $this->hasOne(ProjectTask::class);
+}
+
+public function taskProject()
+{
+    return $this->hasOneThrough(Project::class, ProjectTask::class, 'task_id','id','id','project_id');
+}
    
 public function getActivitylogOptions(): LogOptions
 {

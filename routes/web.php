@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
@@ -33,12 +34,15 @@ Route::group(['middleware'=>['auth']],function(){
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
     Route::resource('tasks', TaskController::class);
+    Route::resource('projects', ProjectController::class);
+    Route::resource('projects.tasks', ProjectController::class);
 
     Route::delete('/user/deleteImage/{id}', [UserController::class, 'deleteImage'])->name('users.deleteImage');
     
     Route::get('/tasks/user/{userId}',[TaskController::class,'profile']);
 
 Route::get('notifications',[TaskController::class,'taskNotification'])->name('notifications');
+
 
 
 Route::get('activity-log',[UserController::class,'logActivity'])->name('activity');
