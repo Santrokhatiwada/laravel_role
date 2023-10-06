@@ -33,6 +33,7 @@ class TaskController extends Controller
     {
         // Check if the project ID is present in the URL query parameters
         $projectId = $request->input('project');
+        
     
         // Fetch the tasks, users, and the project
         $result = $this->taskRepository->getAllTasks();
@@ -129,9 +130,19 @@ foreach ($tasks as $task) {
         $result = $this->taskRepository->findTask($id);
         $task = $result['task'];
         $user = $result['user'];
+
+        if(isset($_GET['project'])){
+        $projectId=$result['projectId'];
+        return view('tasks.show', compact('task', 'user','projectId'));
+
+        }
+
+        else{
+            return view('tasks.show', compact('task', 'user'));
+
+        }
     
 
-        return view('tasks.show', compact('task', 'user'));
     }
 
     /**
@@ -146,10 +157,11 @@ foreach ($tasks as $task) {
 
         $task = $result['task'];
         $user = $result['user'];
+        $projectId= $result['projectId'];
 
 
 
-        return view('tasks.edit', compact('task', 'user'));
+        return view('tasks.edit', compact('task', 'user','projectId'));
     }
 
     /**

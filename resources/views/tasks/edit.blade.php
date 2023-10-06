@@ -10,7 +10,7 @@
                         <h2>Edit Task</h2>
                     </div>
                     <div class="pull-right">
-                        <a class="btn btn-primary" href="{{ route('tasks.index') }}"> Back </a>
+                    <a class="btn btn-primary" href="{{ route('projects.tasks.index', ['project' => $projectId]) }}"> Back </a>
                     </div>
 
                  

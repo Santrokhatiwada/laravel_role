@@ -46,8 +46,11 @@ Route::group(['middleware'=>['auth']],function(){
     // });
     Route::get('/projects/{project}/tasks', [ProjectController::class,'showTasks'])->name('projects.tasks.index');
     Route::get('/projects/{project}/tasks/create', [ProjectController::class,'createTasks'])->name('projects.tasks.create');
-    // Route::get('/projects/{project}/tasks/{task}', [ProjectController::class,'allTasks'])->name('projects.tasks.create');
-    
+    Route::get('/projects/{project}/tasks/{task}', [ProjectController::class,'allTasks'])->name('projects.tasks.show');
+    Route::get('/projects/{project}/tasks/{task}/edit', [ProjectController::class,'editTask'])->name('projects.tasks.edit');
+
+
+   
 
     Route::delete('/user/deleteImage/{id}', [UserController::class, 'deleteImage'])->name('users.deleteImage');
     

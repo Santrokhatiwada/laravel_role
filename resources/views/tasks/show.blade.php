@@ -10,8 +10,13 @@
                         <h2> Show Task</h2>
                     </div>
                     <div class="pull-right">
-                        <a class="btn btn-primary" href="{{ route('tasks.index') }}"> Back </a>
+                    @if(isset($_GET['project']))
+                        <a class="btn btn-primary" href="{{ route('projects.tasks.index', ['project' => $projectId]) }}"> Back </a>
+                    @else
+                    <a class="btn btn-primary" href="{{ route('tasks.index') }}"> Back </a>
 
+
+                    @endif
 
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12">

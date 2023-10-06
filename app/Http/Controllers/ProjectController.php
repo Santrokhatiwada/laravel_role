@@ -131,6 +131,26 @@ public function createTasks(Project $project)
     return redirect()->route('tasks.create', ['project' => $project->id]);
 }
 
+public function allTasks(Project $project,$id)
+{
+    
+$task=$project->projectTasks->find($id);
+
+
+    
+    return redirect()->route('tasks.show', ['project' => $project->id,'task'=> $task->id ]);
+}
+
+
+public function editTask(Project $project,$id)
+{
+    
+$task=$project->projectTasks->find($id);
+
+
+    
+    return redirect()->route('tasks.edit', ['project' => $project->id,'task'=> $task->id ]);
+}
 
 
 

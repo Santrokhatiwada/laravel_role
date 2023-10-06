@@ -114,12 +114,26 @@ class TaskRepository implements TaskRepositoryInterface
         $task = Task::with('taskUser')->find($id);
         $user = User::get();
 
+        if(isset($_GET['project'])){
+            $projects= intval($_GET['project']);
+      
+            $projectId = Project::find($projects); 
 
-        return [
-          
-            'task' => $task,
-            'user' => $user,
-        ];
+            return [
+                'projectId'=>$projectId,
+                'task' => $task,
+                'user' => $user,
+            ];
+        }
+      
+else{
+    return [
+            
+        'task' => $task,
+        'user' => $user,
+    ];
+}
+      
     }
 
     public function updateTask($id, $data)

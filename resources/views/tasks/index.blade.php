@@ -62,7 +62,7 @@
                                     background-color: black;
 
                                     border-radius: 50%;
-                                   
+
                                 }
 
                                 .circle-inner {
@@ -135,28 +135,28 @@
 
                                     @endif
                                     @endforeach -->
-                                   
-                                       
-                                            @foreach ($uniqueUsers as $user)
-                                          
-                                                <a href="javascript:void(0);" class="user-image" data-user-name="{{ $user['name'] }}" data-user-id="{{ $user['id'] }}">
-                                                    @if (!empty($user['image']))
-                                                    <div class="circle">
-                                                        <img height="80px" class="rounded-circle shadow-4-strong circle-inner" alt="avatar2" src="{{ asset('uploads/usersImage/' . $user['image']) }}">
-                                                    </div>
-                                                    @else
-                                                    <!-- No photo -->
-                                                    <div class="circle">
-                                                        <p class="circle-inner circle">{{ substr($user['name'], 0, 1) }}{{ substr($user['name'], strpos($user['name'], ' ') + 1, 1) }}</p>
-                                                    </div>
-                                                    @endif
-                                                </a>
-                                          
-                                            @endforeach
-                                        
-                                
-                            
-                                  
+
+
+                                    @foreach ($uniqueUsers as $user)
+
+                                    <a href="javascript:void(0);" class="user-image" data-user-name="{{ $user['name'] }}" data-user-id="{{ $user['id'] }}"   title="{{ $user['name'] }}">
+                                        @if (!empty($user['image']))
+                                        <div class="circle">
+                                            <img height="80px" class="rounded-circle shadow-4-strong circle-inner" alt="avatar2" src="{{ asset('uploads/usersImage/' . $user['image']) }}">
+                                        </div>
+                                        @else
+                                        <!-- No photo -->
+                                        <div class="circle">
+                                            <p class="circle-inner circle">{{ substr($user['name'], 0, 1) }}{{ substr($user['name'], strpos($user['name'], ' ') + 1, 1) }}</p>
+                                        </div>
+                                        @endif
+                                    </a>
+
+                                    @endforeach
+
+
+
+
 
 
 
@@ -194,13 +194,20 @@
                                                                 <i id="priority" class="fa-solid fa-l" style="color: #d4e3fe;"></i>
                                                                 @endif
 
+                                                                @if(isset($_GET['project']))
+                                                                <a href="{{  route('projects.tasks.show', [ 'task' => $task->id, 'project' => $project->id ]) }}">
+                                                                    @else
+                                                                    <a href="{{ route('tasks.show', $task->id) }}">
+                                                                        @endif
 
-                                                                <a href="{{ route('tasks.show', $task->id) }}">
-                                                                    <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
-                                                                </a>
-                                                                @can('task-edit')
-                                                                @include('tasks.threedot')
-                                                                @endcan
+
+                                                                        <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
+                                                                    </a>
+                                                                    @can('task-edit')
+                                                                    @if(isset($_GET['project']))
+                                                                    @include('tasks.threedot')
+                                                                    @endIf
+                                                                    @endcan
 
 
 
@@ -247,12 +254,18 @@
                                                                 <i id="priority" class="fa-solid fa-l" style="color: #d4e3fe;"></i>
                                                                 @endif
 
-                                                                <a href="{{ route('tasks.show', $task->id) }}">
-                                                                    <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
-                                                                </a>
-                                                                @can('task-edit')
-                                                                @include('tasks.threedot')
-                                                                @endcan
+                                                                @if(isset($_GET['project']))
+                                                                <a href="{{  route('projects.tasks.show', [ 'task' => $task->id, 'project' => $project->id ]) }}">
+                                                                    @else
+                                                                    <a href="{{ route('tasks.show', $task->id) }}">
+                                                                        @endif
+                                                                        <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
+                                                                    </a>
+                                                                    @can('task-edit')
+                                                                    @if(isset($_GET['project']))
+                                                                    @include('tasks.threedot')
+                                                                    @endIf
+                                                                    @endcan
                                                             </li>
 
 
@@ -295,11 +308,17 @@
                                                                 <i id="priority" class="fa-solid fa-l" style="color: #d4e3fe;"></i>
                                                                 @endif
 
-                                                                <a href="{{ route('tasks.show', $task->id) }}">
+                                                                @if(isset($_GET['project']))
+                                                                <a href="{{  route('projects.tasks.show', [ 'task' => $task->id, 'project' => $project->id ]) }}">
+                                                                    @else
+                                                                    <a href="{{ route('tasks.show', $task->id) }}">
+                                                                        @endif
                                                                     <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
                                                                 </a>
                                                                 @can('task-edit')
-                                                                @include('tasks.threedot')
+                                                                @if(isset($_GET['project']))
+                                                                    @include('tasks.threedot')
+                                                                    @endIf
                                                                 @endcan
                                                             </li>
                                                             @else
@@ -337,11 +356,17 @@
                                                                 <i id="priority" class="fa-solid fa-l" style="color: #d4e3fe;"></i>
                                                                 @endif
 
-                                                                <a href="{{ route('tasks.show', $task->id) }}">
+                                                                @if(isset($_GET['project']))
+                                                                <a href="{{  route('projects.tasks.show', [ 'task' => $task->id, 'project' => $project->id ]) }}">
+                                                                    @else
+                                                                    <a href="{{ route('tasks.show', $task->id) }}">
+                                                                        @endif
                                                                     <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
                                                                 </a>
                                                                 @can('task-edit')
-                                                                @include('tasks.threedot')
+                                                                @if(isset($_GET['project']))
+                                                                    @include('tasks.threedot')
+                                                                    @endIf
                                                                 @endcan
 
 
@@ -500,14 +525,14 @@
 
 
 
-
+    @if(isset($_GET['project']))
     $(function() {
         $(".user-image").click(function() {
             var userId = $(this).data("user-id");
             var user_name = $(this).data("user-name");
 
             // Make an AJAX request to fetch tasks assigned to the user
-            
+
             $.ajax({
                 url: "/tasks/user/" + userId, // Update the URL to match your route
                 method: "GET",
