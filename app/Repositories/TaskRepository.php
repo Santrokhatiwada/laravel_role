@@ -110,12 +110,13 @@ class TaskRepository implements TaskRepositoryInterface
 
     public function findTask($id)
     {
-
+       
         $task = Task::with('taskUser')->find($id);
         $user = User::get();
 
 
         return [
+          
             'task' => $task,
             'user' => $user,
         ];

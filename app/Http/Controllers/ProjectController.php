@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Models\Task;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -17,6 +18,7 @@ class ProjectController extends Controller
         
         $projects = Project::with('projectTasks')->latest()->paginate(5);
 
+     
      
        
         return view('projects.index',compact('projects'))
@@ -73,9 +75,9 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Project $project)
     {
-        //
+        return view('projects.edit',compact('project'));
     }
 
     /**
@@ -87,7 +89,18 @@ class ProjectController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        request()->validate([
+            'name' => 'required',
+            'details' => 'required',
+        ]);
+
+        $project= Project::find($id);
+      
+    
+        $project->update($request->all());
+    
+        return redirect()->route('projects.index')
+                        ->with('success','Product updated successfully.');
     }
 
     /**
@@ -96,27 +109,30 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Project $project)
     {
-        //
+        $project->delete();
+    
+        return redirect()->route('projects.index')
+                        ->with('success','Project deleted successfully');
     }
 
     public function showTasks(Project $project)
 {
 
     
-   
     return redirect()->route('tasks.index', ['project' => $project->id]);
 }
 
 
 public function createTasks(Project $project)
 {
-
-    
    
     return redirect()->route('tasks.create', ['project' => $project->id]);
 }
+
+
+
 
 
 

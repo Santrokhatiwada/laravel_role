@@ -129,6 +129,7 @@ foreach ($tasks as $task) {
         $result = $this->taskRepository->findTask($id);
         $task = $result['task'];
         $user = $result['user'];
+    
 
         return view('tasks.show', compact('task', 'user'));
     }
