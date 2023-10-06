@@ -28,4 +28,6 @@ class Project extends Model
         return $this->hasManyThrough(Task::class, ProjectTask::class, 'project_id','id','id','task_id');
     }
 
+
+
 }

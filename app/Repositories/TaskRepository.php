@@ -5,11 +5,12 @@ namespace App\Repositories;
 
 use App\Interfaces\TaskRepositoryInterface;
 use App\Models\Product;
+use App\Models\Project;
 use App\Models\Task;
 use App\Models\TaskUser;
 use App\Models\User;
 use App\Notifications\TaskNotification;
-
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 use Spatie\ModelStatus\Status;
 
@@ -17,22 +18,44 @@ class TaskRepository implements TaskRepositoryInterface
 {
     public function getAllTasks()
     {
-        $task = Task::with('taskUser', 'statuses')->orderBy('priority', 'asc')
+        $request = new Request();
+        $tasks = Task::with('taskUser', 'statuses', 'taskProject')
+            ->orderBy('priority', 'asc')
             ->latest()
             ->paginate(10);
-         
-            $user = User::get();
+        $users = User::get();
+        // dd(isset($_GET['project']));
+        foreach ($tasks as $task) { 
+        
+            // dd((intval($_GET['project'])));
 
+            
+            if (!empty($task->taskProject['id']) && isset($_GET['project'])  ) {
 
-            return [
-                'task' => $task,
-                'user' => $user,
-            ];
+              
+                if (intval($_GET['project'])==$task->taskProject->id){
+                $tasks = $task->taskProject->projectTasks;
+                }
+                else{
+        $tasks= [];
+                    
+                }
+            }
+            
+           
+        }
+    
+        return [
+            'tasks' => $tasks,
+            'users' => $users,
+        ];
     }
+    
 
     public function storeTask($data)
     {
-
+        
+      
         $task = Task::create($data);
         
 
@@ -44,6 +67,17 @@ class TaskRepository implements TaskRepositoryInterface
             'user_id' => $data['user_id'],
         ]);
        
+      
+        if ($data['project_id']) {
+           
+
+           
+            $task->project()->create([
+
+               
+                'project_id' => $data['project_id'],
+            ]);
+        }
      
         $taskName= $task['task_name'];
         $status = 'created';
@@ -51,14 +85,27 @@ class TaskRepository implements TaskRepositoryInterface
        
     
         // Use the Mail facade to send a test email notification
-        Notification::send($user, new TaskNotification($status,$taskName,$user));   
+        Notification::send($user, new TaskNotification($status,$taskName,$user));  
+        
+        
+
 
         return $task;
     }
 
     public function createTask()
     {
-        return User::get();
+
+       $projects= intval($_GET['project']);
+      
+       $projectId = Project::find($projects); 
+        $user=User::get();
+
+        return [
+            'projectId'=>$projectId,
+            'projects' => $projects,
+            'user' => $user,
+        ];
     }
 
     public function findTask($id)

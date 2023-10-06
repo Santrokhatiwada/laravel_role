@@ -62,7 +62,8 @@
                                                 @foreach($user as $user)
 
 
-                                                <option value="{{$user->id}}"  {{ $user->id == $task->taskUser->id ? 'selected' : '' }}>{{$user->name}}</option>                                                @endforeach
+                                                <option value="{{$user->id}}"  {{ $user->id == $task->taskUser->id ? 'selected' : '' }}>{{$user->name}}</option>  
+                                                                                           @endforeach
                                             </select>
                                         </div>
                                     </div>

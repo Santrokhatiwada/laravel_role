@@ -100,4 +100,24 @@ class ProjectController extends Controller
     {
         //
     }
+
+    public function showTasks(Project $project)
+{
+
+    
+   
+    return redirect()->route('tasks.index', ['project' => $project->id]);
+}
+
+
+public function createTasks(Project $project)
+{
+
+    
+   
+    return redirect()->route('tasks.create', ['project' => $project->id]);
+}
+
+
+
 }

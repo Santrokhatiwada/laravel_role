@@ -12,7 +12,20 @@
                     <div class="pull-right">
                         @can('task-create')
                         <div class="pull-right">
-                            <a class="btn btn-success" href="{{ route('tasks.create') }}"> Create Task </a>
+
+                            <div class="pull-right">
+                                <a class="btn btn-primary" href="{{ route('projects.index') }}"> Back </a>
+                            </div>
+                            <div style="margin-top: 10px;">
+
+
+                                @if($project)
+
+
+                                <a class="btn btn-success" href="{{ route('projects.tasks.create', ['project' => $project->id]) }}"> Add Task for Project ({{ $project->name }}) </a>
+                                @endif
+                            </div>
+
                         </div>
                         @endcan
 
@@ -37,17 +50,19 @@
                                 #eye {
                                     margin-left: 5px;
                                 }
-                                #priority{
+
+                                #priority {
                                     margin-left: 40px;
                                 }
 
-                                
+
 
                                 .circle {
                                     display: inline-block;
                                     background-color: black;
 
                                     border-radius: 50%;
+                                   
                                 }
 
                                 .circle-inner {
@@ -70,37 +85,78 @@
                         <body class="bg-light">
 
 
-
                             <div class="container">
 
                                 <div class="col-md-12">
                                     <h2 class="text-center pb-3 pt-1">Task Management</h2>
 
+                                    <!-- @foreach($tasks as $task)
+                                    @if(isset($project->projectTasks->taskUser))
+
                                     @foreach($users as $user)
-
-
-
-
+                                   
                                     @if($user->userTask->count() > 0)
-                                    <!-- <a href="tasks" onclick="userId('{{$user->id}}')"> -->
+                                    
                                     <a href="javascript:void(0);" class="user-image" data-user-name="{{ $user->name}}" data-user-id="{{ $user->id }}">
-
                                         @if(!empty($user->image))
-
                                         <div class="circle">
                                             <img height="80px" class="rounded-circle shadow-4-strong circle-inner " alt="avatar2" src="{{ asset('uploads/usersImage/' . $user->image) }}">
                                         </div>
                                         @else
-                                        <!-- No photo -->
-
+                                        No photo
                                         <div class="circle">
                                             <p class="circle-inner">{{ substr($user->name, 0, 1) }}{{ substr($user->name, strpos($user->name, ' ') + 1, 1) }}</p>
                                         </div>
                                         @endif
                                     </a>
                                     @endif
-
                                     @endforeach
+@else
+
+                                    @foreach($users as $user)
+                                   
+                                    @if($user->userTask->count() > 0)
+                                
+                                    <a href="javascript:void(0);" class="user-image" data-user-name="{{ $user->name}}" data-user-id="{{ $user->id }}">
+                                        @if(!empty($user->image))
+                                        <div class="circle">
+                                            <img height="80px" class="rounded-circle shadow-4-strong circle-inner " alt="avatar2" src="{{ asset('uploads/usersImage/' . $user->image) }}">
+                                        </div>
+                                        @else
+                                        No photo
+                                        <div class="circle">
+                                            <p class="circle-inner">{{ substr($user->name, 0, 1) }}{{ substr($user->name, strpos($user->name, ' ') + 1, 1) }}</p>
+                                        </div>
+                                        @endif
+                                    </a>
+                                    @endif
+                                    @endforeach
+
+
+                                    @endif
+                                    @endforeach -->
+                                   
+                                       
+                                            @foreach ($uniqueUsers as $user)
+                                          
+                                                <a href="javascript:void(0);" class="user-image" data-user-name="{{ $user['name'] }}" data-user-id="{{ $user['id'] }}">
+                                                    @if (!empty($user['image']))
+                                                    <div class="circle">
+                                                        <img height="80px" class="rounded-circle shadow-4-strong circle-inner" alt="avatar2" src="{{ asset('uploads/usersImage/' . $user['image']) }}">
+                                                    </div>
+                                                    @else
+                                                    <!-- No photo -->
+                                                    <div class="circle">
+                                                        <p class="circle-inner circle">{{ substr($user['name'], 0, 1) }}{{ substr($user['name'], strpos($user['name'], ' ') + 1, 1) }}</p>
+                                                    </div>
+                                                    @endif
+                                                </a>
+                                          
+                                            @endforeach
+                                        
+                                
+                            
+                                  
 
 
 
@@ -117,8 +173,10 @@
 
 
 
+
                                                             @foreach($tasks as $task)
                                                             @if(Auth::user()->hasRole('SuperAdmin') || (Auth::user()->hasRole('User') && optional($task->taskUser)->id === Auth::id() ))
+
 
                                                             @if($task->statuses->isNotEmpty())
 
@@ -127,15 +185,15 @@
 
 
                                                             <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
-                                                               
-                                                                    @if ($task->priority === 'high-priority')
-                                                                    <i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>
-                                                                    @elseif ($task->priority === 'medium-priority')
-                                                                    <i id="priority" class="fa-solid fa-m" style="color: #0056d6;"></i>
-                                                                    @elseif ($task->priority === 'low-priority')
-                                                                    <i id="priority"  class="fa-solid fa-l" style="color: #d4e3fe;"></i>
-                                                                    @endif
-                                                              
+
+                                                                @if ($task->priority === 'high-priority')
+                                                                <i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>
+                                                                @elseif ($task->priority === 'medium-priority')
+                                                                <i id="priority" class="fa-solid fa-m" style="color: #0056d6;"></i>
+                                                                @elseif ($task->priority === 'low-priority')
+                                                                <i id="priority" class="fa-solid fa-l" style="color: #d4e3fe;"></i>
+                                                                @endif
+
 
                                                                 <a href="{{ route('tasks.show', $task->id) }}">
                                                                     <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
@@ -181,14 +239,14 @@
 
                                                             <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
 
-                                                            @if ($task->priority === 'high-priority')
-                                                                    <i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>
-                                                                    @elseif ($task->priority === 'medium-priority')
-                                                                    <i id="priority" class="fa-solid fa-m" style="color: #0056d6;"></i>
-                                                                    @elseif ($task->priority === 'low-priority')
-                                                                    <i id="priority"  class="fa-solid fa-l" style="color: #d4e3fe;"></i>
-                                                                    @endif
-                                                              
+                                                                @if ($task->priority === 'high-priority')
+                                                                <i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>
+                                                                @elseif ($task->priority === 'medium-priority')
+                                                                <i id="priority" class="fa-solid fa-m" style="color: #0056d6;"></i>
+                                                                @elseif ($task->priority === 'low-priority')
+                                                                <i id="priority" class="fa-solid fa-l" style="color: #d4e3fe;"></i>
+                                                                @endif
+
                                                                 <a href="{{ route('tasks.show', $task->id) }}">
                                                                     <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
                                                                 </a>
@@ -229,14 +287,14 @@
 
                                                             <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
 
-                                                            @if ($task->priority === 'high-priority')
-                                                                    <i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>
-                                                                    @elseif ($task->priority === 'medium-priority')
-                                                                    <i id="priority" class="fa-solid fa-m" style="color: #0056d6;"></i>
-                                                                    @elseif ($task->priority === 'low-priority')
-                                                                    <i id="priority"  class="fa-solid fa-l" style="color: #d4e3fe;"></i>
-                                                                    @endif
-                                                              
+                                                                @if ($task->priority === 'high-priority')
+                                                                <i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>
+                                                                @elseif ($task->priority === 'medium-priority')
+                                                                <i id="priority" class="fa-solid fa-m" style="color: #0056d6;"></i>
+                                                                @elseif ($task->priority === 'low-priority')
+                                                                <i id="priority" class="fa-solid fa-l" style="color: #d4e3fe;"></i>
+                                                                @endif
+
                                                                 <a href="{{ route('tasks.show', $task->id) }}">
                                                                     <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
                                                                 </a>
@@ -271,14 +329,14 @@
                                                             <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
 
 
-                                                            @if ($task->priority === 'high-priority')
-                                                                    <i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>
-                                                                    @elseif ($task->priority === 'medium-priority')
-                                                                    <i id="priority" class="fa-solid fa-m" style="color: #0056d6;"></i>
-                                                                    @elseif ($task->priority === 'low-priority')
-                                                                    <i id="priority"  class="fa-solid fa-l" style="color: #d4e3fe;"></i>
-                                                                    @endif
-                                                              
+                                                                @if ($task->priority === 'high-priority')
+                                                                <i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>
+                                                                @elseif ($task->priority === 'medium-priority')
+                                                                <i id="priority" class="fa-solid fa-m" style="color: #0056d6;"></i>
+                                                                @elseif ($task->priority === 'low-priority')
+                                                                <i id="priority" class="fa-solid fa-l" style="color: #d4e3fe;"></i>
+                                                                @endif
+
                                                                 <a href="{{ route('tasks.show', $task->id) }}">
                                                                     <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
                                                                 </a>
@@ -397,19 +455,19 @@
 <!-- for passing user id on click of photo -->
 <script>
     function individual_task(task) {
-    let priorityIcon = '';  // Initialize an empty string for the priority icon HTML
+        let priorityIcon = ''; // Initialize an empty string for the priority icon HTML
 
-    // Determine the priority icon based on the task's priority
-    if (task.priority === 'high-priority') {
-        priorityIcon = '<i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>';
-    } else if (task.priority === 'medium-priority') {
-        priorityIcon = '<i id="priority" class="fa-solid fa-m" style="color: #0056d6;"></i>';
-    } else if (task.priority === 'low-priority') {
-        priorityIcon = '<i id="priority" class="fa-solid fa-l" style="color: #d4e3fe;"></i>';
-    }
+        // Determine the priority icon based on the task's priority
+        if (task.priority === 'high-priority') {
+            priorityIcon = '<i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>';
+        } else if (task.priority === 'medium-priority') {
+            priorityIcon = '<i id="priority" class="fa-solid fa-m" style="color: #0056d6;"></i>';
+        } else if (task.priority === 'low-priority') {
+            priorityIcon = '<i id="priority" class="fa-solid fa-l" style="color: #d4e3fe;"></i>';
+        }
 
-    // Construct the individual task item with the priority icon
-    return `
+        // Construct the individual task item with the priority icon
+        return `
     <li class="list-group-item" task-id="${task.id}" onclick="onTaskNameClick('${task.id}')">
         ${task.task_name}
         ${priorityIcon}  <!-- Insert the priority icon here -->
@@ -438,7 +496,7 @@
             </li>
         </ul>
     </li>`;
-}
+    }
 
 
 
@@ -449,6 +507,7 @@
             var user_name = $(this).data("user-name");
 
             // Make an AJAX request to fetch tasks assigned to the user
+            
             $.ajax({
                 url: "/tasks/user/" + userId, // Update the URL to match your route
                 method: "GET",

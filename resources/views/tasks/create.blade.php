@@ -10,7 +10,7 @@
                         <h2>Add New Task</h2>
                     </div>
                     <div class="pull-right">
-                        <a class="btn btn-primary" href="{{ route('tasks.index') }}"> Back </a>
+                        <a class="btn btn-primary" href="{{ route('projects.tasks.index', ['project' => $projectId]) }}"> Back </a>
                     </div>
 
                     @if ($errors->any())
@@ -63,24 +63,40 @@
 
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
-                                <label for="priority_order">Priority:</label>
+                                    <label for="priority_order">Priority:</label>
                                     <select name="priority" class="form-control">
                                         <option value="" disabled selected>Select to Task Priority</option>
-                                      
+
                                         <option value="high-priority">High-Priority</option>
                                         <option value="medium-priority">Medium-Priority</option>
                                         <option value="low-priority">Low-Priority</option>
-                                       
+
                                     </select>
                                 </div>
                             </div>
+
+
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <div class="form-group">
+                                    <label for="assigner_project">Project:</label>
+                                    <select name="project_id" class="form-control">
+                                        <option value="" disabled>Select to Assign Project</option>
+                                        <option value="{{ request()->input('project') }}" selected>
+                                            {{ request()->input('project') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+
 
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
                                     <label for="assigner_select">Assigned by:</label>
                                     <select name="assigner_id" class="form-control">
                                         <option value="" disabled selected>Select Assigner</option>
-                                        <option value="{{ Auth::id() }}">{{ Auth::user()->name }}</option>
+                                        <option value="{{ Auth::id() }}" selected>{{ Auth::user()->name }}</option>
                                     </select>
                                 </div>
                             </div>

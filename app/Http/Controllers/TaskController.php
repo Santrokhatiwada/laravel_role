@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Interfaces\TaskRepositoryInterface;
+use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use App\Notifications\TaskNotification;
@@ -28,32 +29,42 @@ class TaskController extends Controller
         $this->middleware('permission:task-delete', ['only' => ['destroy']]);
         $this->taskRepository = $taskRepository;
     }
-    public function index()
+    public function index(Request $request)
     {
-
+        // Check if the project ID is present in the URL query parameters
+        $projectId = $request->input('project');
+    
+        // Fetch the tasks, users, and the project
         $result = $this->taskRepository->getAllTasks();
-
-        $tasks = $result['task'];
-        $users = $result['user'];
-
-        //     $taskIds = [];
-        // foreach ($tasks as $task) {
-        //     $taskIds[] = $task->id;
-        // }
+    
+        $tasks = $result['tasks'];
+        $users = $result['users'];
 
 
+        $uniqueUsers = [];
+
+foreach ($tasks as $task) {
+    if ($task->taskUser && !in_array($task->taskUser->id, array_column($uniqueUsers, 'id'))) {
+        $uniqueUsers[] = [
+            'id' => $task->taskUser->id,
+            'name' => $task->taskUser->name,
+            'image' => $task->taskUser->image,
+        ];
+    }
+}
 
 
-
+    
+        // Load the project based on the $projectId if it's available
+        $project = $projectId ? Project::find($projectId) : null;
+    
         if (request()->expectsJson()) {
             return response()->json(['tasks' => $tasks, 'users' => $users]);
         } else {
-            return view('tasks.index', compact('tasks', 'users'));
+            return view('tasks.index', compact('tasks', 'users', 'project','uniqueUsers'));
         }
-
-
-        // return view('tasks.index', compact('tasks','users' ));
     }
+    
 
     /**
      * Show the form for creating a new resource.
@@ -62,8 +73,13 @@ class TaskController extends Controller
      */
     public function create()
     {
-        $user = $this->taskRepository->createTask();
-        return view('tasks.create', compact('user'));
+        $result = $this->taskRepository->createTask();
+
+        $project=$result['projects'];
+        $user=$result['user'];
+        $projectId=$result['projectId'];
+       
+        return view('tasks.create', compact('user','project','projectId'));
     }
 
     /**
@@ -82,8 +98,7 @@ class TaskController extends Controller
             'user_id' => 'nullable',
             'deadline' => 'nullable',
             'priority'=>'nullable',
-
-
+            'project_id'=>'nullable',
 
         ]);
 
@@ -92,11 +107,13 @@ class TaskController extends Controller
         $data['assigner_id'] = intval($request->assigner_id);
         $data['user_id'] = intval($request->user_id);
 
+        $project=$data['project_id'];
+
         $tasks = $this->taskRepository->storeTask($data);
 
 
 
-        return redirect()->route('tasks.index', compact('tasks'));
+        return redirect()->route('projects.tasks.index', ['project' => $project, 'tasks' => $tasks]);
     }
 
     /**
