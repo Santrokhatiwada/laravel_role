@@ -22,44 +22,45 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/',[LoginController::class,'index']);
+Route::get('/', [LoginController::class, 'index']);
 
 Auth::routes();
 
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::group(['middleware'=>['auth']],function(){
+Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
     Route::resource('tasks', TaskController::class);
     Route::resource('projects', ProjectController::class);
     Route::resource('projects.tasks', ProjectController::class);
-    
+
     // Route::group([
     //     'prefix' => 'projects'
     // ], function(){
     //     Route::resource('/', ProjectController::class);p
     //     Route::resource('{id}/tasks', ProjectController::class);
-        
+
     // });
-    Route::get('/projects/{project}/tasks', [ProjectController::class,'showTasks'])->name('projects.tasks.index');
-    Route::get('/projects/{project}/tasks/create', [ProjectController::class,'createTasks'])->name('projects.tasks.create');
-    Route::get('/projects/{project}/tasks/{task}', [ProjectController::class,'allTasks'])->name('projects.tasks.show');
-    Route::get('/projects/{project}/tasks/{task}/edit', [ProjectController::class,'editTask'])->name('projects.tasks.edit');
 
 
-   
+    Route::get('/projects/{project}/tasks', [ProjectController::class, 'showTasks'])->name('projects.tasks.index');
+    Route::get('/projects/{project}/tasks/create', [ProjectController::class, 'createTasks'])->name('projects.tasks.create');
+    Route::get('/projects/{project}/tasks/{task}', [ProjectController::class, 'allTasks'])->name('projects.tasks.show');
+    Route::get('/projects/{project}/tasks/{task}/edit', [ProjectController::class, 'editTask'])->name('projects.tasks.edit');
+
+
+
 
     Route::delete('/user/deleteImage/{id}', [UserController::class, 'deleteImage'])->name('users.deleteImage');
-    
-    Route::get('/tasks/user/{userId}',[TaskController::class,'profile']);
 
-Route::get('notifications',[TaskController::class,'taskNotification'])->name('notifications');
+    Route::get('/tasks/user/{userId}', [TaskController::class, 'profile']);
+
+    Route::get('notifications', [TaskController::class, 'taskNotification'])->name('notifications');
 
 
 
-Route::get('activity-log',[UserController::class,'logActivity'])->name('activity');
-
+    Route::get('activity-log', [UserController::class, 'logActivity'])->name('activity');
 });

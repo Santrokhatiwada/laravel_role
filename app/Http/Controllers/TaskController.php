@@ -7,9 +7,11 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use App\Notifications\TaskNotification;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
 
 use Spatie\ModelStatus\Status;
@@ -33,39 +35,48 @@ class TaskController extends Controller
     {
         // Check if the project ID is present in the URL query parameters
         $projectId = $request->input('project');
-        
-    
+
+
+        // if (!isset($_GET['project']) && Auth::user()->getRoleNames()->contains('User') && Gate::denies('project-list')) {
+        //     abort(403, 'Unauthorized action.');
+        // }
+
         // Fetch the tasks, users, and the project
         $result = $this->taskRepository->getAllTasks();
-    
+
         $tasks = $result['tasks'];
         $users = $result['users'];
 
 
         $uniqueUsers = [];
 
-foreach ($tasks as $task) {
-    if ($task->taskUser && !in_array($task->taskUser->id, array_column($uniqueUsers, 'id'))) {
-        $uniqueUsers[] = [
-            'id' => $task->taskUser->id,
-            'name' => $task->taskUser->name,
-            'image' => $task->taskUser->image,
-        ];
-    }
-}
+        foreach ($tasks as $task) {
+            if ($task->taskUser && !in_array($task->taskUser->id, array_column($uniqueUsers, 'id'))) {
+                $uniqueUsers[] = [
+                    'id' => $task->taskUser->id,
+                    'name' => $task->taskUser->name,
+                    'image' => $task->taskUser->image,
+                ];
+            }
+        }
 
 
-    
         // Load the project based on the $projectId if it's available
         $project = $projectId ? Project::find($projectId) : null;
-    
+
+
+
+
+
+
+
         if (request()->expectsJson()) {
             return response()->json(['tasks' => $tasks, 'users' => $users]);
         } else {
-            return view('tasks.index', compact('tasks', 'users', 'project','uniqueUsers'));
+            return view('tasks.index', compact('tasks', 'users', 'project', 'uniqueUsers'));
         }
     }
-    
+
 
     /**
      * Show the form for creating a new resource.
@@ -74,13 +85,17 @@ foreach ($tasks as $task) {
      */
     public function create()
     {
+
+        if (Gate::denies('project-create')) {
+            abort(403, 'Unauthorized action.');
+        }
         $result = $this->taskRepository->createTask();
 
-        $project=$result['projects'];
-        $user=$result['user'];
-        $projectId=$result['projectId'];
-       
-        return view('tasks.create', compact('user','project','projectId'));
+        $project = $result['projects'];
+        $user = $result['user'];
+        $projectId = $result['projectId'];
+
+        return view('tasks.create', compact('user', 'project', 'projectId'));
     }
 
     /**
@@ -98,8 +113,8 @@ foreach ($tasks as $task) {
             'assigner_id' => 'required|integer',
             'user_id' => 'nullable',
             'deadline' => 'nullable',
-            'priority'=>'nullable',
-            'project_id'=>'nullable',
+            'priority' => 'nullable',
+            'project_id' => 'nullable',
 
         ]);
 
@@ -108,7 +123,7 @@ foreach ($tasks as $task) {
         $data['assigner_id'] = intval($request->assigner_id);
         $data['user_id'] = intval($request->user_id);
 
-        $project=$data['project_id'];
+        $project = $data['project_id'];
 
         $tasks = $this->taskRepository->storeTask($data);
 
@@ -131,18 +146,12 @@ foreach ($tasks as $task) {
         $task = $result['task'];
         $user = $result['user'];
 
-        if(isset($_GET['project'])){
-        $projectId=$result['projectId'];
-        return view('tasks.show', compact('task', 'user','projectId'));
-
-        }
-
-        else{
+        if (isset($_GET['project'])) {
+            $projectId = $result['projectId'];
+            return view('tasks.show', compact('task', 'user', 'projectId'));
+        } else {
             return view('tasks.show', compact('task', 'user'));
-
         }
-    
-
     }
 
     /**
@@ -153,15 +162,18 @@ foreach ($tasks as $task) {
      */
     public function edit($id)
     {
+        if (Gate::denies('project-edit')) {
+            abort(403, 'Unauthorized action.');
+        }
         $result = $this->taskRepository->findTask($id);
 
         $task = $result['task'];
         $user = $result['user'];
-        $projectId= $result['projectId'];
+        $projectId = $result['projectId'];
 
 
 
-        return view('tasks.edit', compact('task', 'user','projectId'));
+        return view('tasks.edit', compact('task', 'user', 'projectId'));
     }
 
     /**
@@ -208,6 +220,9 @@ foreach ($tasks as $task) {
      */
     public function destroy($id)
     {
+        if (Gate::denies('project-delete')) {
+            abort(403, 'Unauthorized action.');
+        }
         $this->taskRepository->deleteTask($id);
         return redirect()->route('tasks.index')
             ->with('success', 'Task deleted successfully');
@@ -279,6 +294,5 @@ foreach ($tasks as $task) {
 
         $tasks = $this->taskRepository->getProfile($userId);
         return $tasks;
-       
     }
 }

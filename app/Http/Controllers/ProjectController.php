@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\Task;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ProjectController extends Controller
 {
@@ -13,15 +15,26 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    function __construct()
+    {
+        $this->middleware('permission:project-list|project-create|project-edit|project-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:project-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:project-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:project-delete', ['only' => ['destroy']]);
+    }
+
+
+
     public function index()
     {
-        
+
+
         $projects = Project::with('projectTasks')->latest()->paginate(5);
 
-     
-     
-       
-        return view('projects.index',compact('projects'))
+
+
+
+        return view('projects.index', compact('projects'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
@@ -48,15 +61,15 @@ class ProjectController extends Controller
             'details' => 'required',
         ]);
 
-      
-    
+
+
         Project::create($request->all());
-    
+
         return redirect()->route('projects.index')
-                        ->with('success','Product created successfully.');
+            ->with('success', 'Product created successfully.');
     }
-    
-    
+
+
 
     /**
      * Display the specified resource.
@@ -77,7 +90,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        return view('projects.edit',compact('project'));
+        return view('projects.edit', compact('project'));
     }
 
     /**
@@ -94,13 +107,13 @@ class ProjectController extends Controller
             'details' => 'required',
         ]);
 
-        $project= Project::find($id);
-      
-    
+        $project = Project::find($id);
+
+
         $project->update($request->all());
-    
+
         return redirect()->route('projects.index')
-                        ->with('success','Product updated successfully.');
+            ->with('success', 'Product updated successfully.');
     }
 
     /**
@@ -112,48 +125,45 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         $project->delete();
-    
+
         return redirect()->route('projects.index')
-                        ->with('success','Project deleted successfully');
+            ->with('success', 'Project deleted successfully');
     }
 
     public function showTasks(Project $project)
-{
-
-    
-    return redirect()->route('tasks.index', ['project' => $project->id]);
-}
-
-
-public function createTasks(Project $project)
-{
-   
-    return redirect()->route('tasks.create', ['project' => $project->id]);
-}
-
-public function allTasks(Project $project,$id)
-{
-    
-$task=$project->projectTasks->find($id);
-
-
-    
-    return redirect()->route('tasks.show', ['project' => $project->id,'task'=> $task->id ]);
-}
-
-
-public function editTask(Project $project,$id)
-{
-    
-$task=$project->projectTasks->find($id);
-
-
-    
-    return redirect()->route('tasks.edit', ['project' => $project->id,'task'=> $task->id ]);
-}
+    {
 
 
 
+        return redirect()->route('tasks.index', ['project' => $project->id]);
+    }
 
 
+    public function createTasks(Project $project)
+    {
+
+        return redirect()->route('tasks.create', ['project' => $project->id]);
+    }
+
+    public function allTasks(Project $project, $id)
+    {
+
+
+        $task = $project->projectTasks->find($id);
+
+
+
+        return redirect()->route('tasks.show', ['project' => $project->id, 'task' => $task->id]);
+    }
+
+
+    public function editTask(Project $project, $id)
+    {
+
+        $task = $project->projectTasks->find($id);
+
+
+
+        return redirect()->route('tasks.edit', ['project' => $project->id, 'task' => $task->id]);
+    }
 }

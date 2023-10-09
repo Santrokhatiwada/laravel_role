@@ -139,7 +139,7 @@
 
                                     @foreach ($uniqueUsers as $user)
 
-                                    <a href="javascript:void(0);" class="user-image" data-user-name="{{ $user['name'] }}" data-user-id="{{ $user['id'] }}"   title="{{ $user['name'] }}">
+                                    <a href="javascript:void(0);" class="user-image" data-user-name="{{ $user['name'] }}" data-user-id="{{ $user['id'] }}" title="{{ $user['name'] }}">
                                         @if (!empty($user['image']))
                                         <div class="circle">
                                             <img height="80px" class="rounded-circle shadow-4-strong circle-inner" alt="avatar2" src="{{ asset('uploads/usersImage/' . $user['image']) }}">
@@ -168,6 +168,10 @@
                                                     <div class="card-header bg-secondary text-white">
                                                         <h1>To Do</h1>
                                                     </div>
+
+
+
+
                                                     <div class="card-body empty-list" data-status="pending">
                                                         <ul class="list-group connectedSortable shadow-lg" id="pending-item-drop">
 
@@ -175,6 +179,8 @@
 
 
                                                             @foreach($tasks as $task)
+
+
                                                             @if(Auth::user()->hasRole('SuperAdmin') || (Auth::user()->hasRole('User') && optional($task->taskUser)->id === Auth::id() ))
 
 
@@ -184,7 +190,7 @@
 
 
 
-                                                            <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
+                                                            <li class="list-group-item" task-id="{{ $task->id }}" data-user-id="{{ $task->user_id }}" onclick=" onTaskNameClick('{{ $task->id }}')" data-user="{{ $task->user_id }}">{{ $task->task_name }}
 
                                                                 @if ($task->priority === 'high-priority')
                                                                 <i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>
@@ -313,13 +319,13 @@
                                                                     @else
                                                                     <a href="{{ route('tasks.show', $task->id) }}">
                                                                         @endif
-                                                                    <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
-                                                                </a>
-                                                                @can('task-edit')
-                                                                @if(isset($_GET['project']))
+                                                                        <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
+                                                                    </a>
+                                                                    @can('task-edit')
+                                                                    @if(isset($_GET['project']))
                                                                     @include('tasks.threedot')
                                                                     @endIf
-                                                                @endcan
+                                                                    @endcan
                                                             </li>
                                                             @else
                                                             @endif
@@ -361,13 +367,13 @@
                                                                     @else
                                                                     <a href="{{ route('tasks.show', $task->id) }}">
                                                                         @endif
-                                                                    <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
-                                                                </a>
-                                                                @can('task-edit')
-                                                                @if(isset($_GET['project']))
+                                                                        <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
+                                                                    </a>
+                                                                    @can('task-edit')
+                                                                    @if(isset($_GET['project']))
                                                                     @include('tasks.threedot')
                                                                     @endIf
-                                                                @endcan
+                                                                    @endcan
 
 
                                                             </li>
@@ -481,7 +487,7 @@
 <script>
     function individual_task(task) {
         let priorityIcon = ''; // Initialize an empty string for the priority icon HTML
-
+        const queryParams = new URLSearchParams(window.location.search);
         // Determine the priority icon based on the task's priority
         if (task.priority === 'high-priority') {
             priorityIcon = '<i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>';
@@ -491,6 +497,7 @@
             priorityIcon = '<i id="priority" class="fa-solid fa-l" style="color: #d4e3fe;"></i>';
         }
 
+
         // Construct the individual task item with the priority icon
         return `
     <li class="list-group-item" task-id="${task.id}" onclick="onTaskNameClick('${task.id}')">
@@ -499,6 +506,8 @@
         <a href="/tasks/${task.id}">
             <i id="eye" class="fa-solid fa-eye" style="color: #00a3d7;"></i>
         </a>
+        ${queryParams.has('project') ? (`
+                                                                   
         <i id="threeDot" class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
         <ul class="dropdown-menu">
             <li>
@@ -520,16 +529,18 @@
                 </span>
             </li>
         </ul>
+        `) : '' }
     </li>`;
     }
 
 
 
-    @if(isset($_GET['project']))
     $(function() {
         $(".user-image").click(function() {
             var userId = $(this).data("user-id");
             var user_name = $(this).data("user-name");
+
+
 
             // Make an AJAX request to fetch tasks assigned to the user
 
@@ -537,6 +548,8 @@
                 url: "/tasks/user/" + userId, // Update the URL to match your route
                 method: "GET",
                 success: function(data) {
+
+
 
                     console.log("Tasks assigned to user with ID " + userId, data);
                     $('#indivisual_user_name').text("Task's of: " + user_name);
@@ -560,29 +573,96 @@
                     $("#completed-item-drop").empty();
                     $("#accepted-item-drop").empty();
 
-                    pendingTasks.forEach(task => {
-                        if (task) {
-                            $('#pending-item-drop').append(individual_task(task));
-                        }
-                    });
-                    completedTask.forEach(task => {
-                        if (task) {
-                            $('#completed-item-drop').append(individual_task(task));
-                        }
-                    });
-                    on_progress_task.forEach(task => {
-                        if (task) {
-                            $('#on-progress-item-drop').append(individual_task(task));
 
+                    // if(isset($_GET['project']) && intval($_GET['project'])== $task->taskProject->id)
+
+
+                    const currentUrl = window.location.search;
+                    console.log(currentUrl);
+                    //Use URLSearchParams to parse the query string
+                    const params = new URLSearchParams(currentUrl);
+                    // Get the value of the 'project' parameter
+                    const projectId = params.get('project');
+                    console.log(projectId);
+
+
+
+
+
+
+
+                    pendingTasks.forEach(task => {
+                        console.log(task);
+                        if (task) {
+                            console.log(task);
+                            if (projectId && projectId == task.taskProjectIds) {
+                                console.log('if');
+                                $('#pending-item-drop').append(individual_task(task));
+                            } else {
+
+                                console.log('else');
+                                if (!projectId) {
+                                    console.log('vitra');
+
+                                    $('#pending-item-drop').append(individual_task(task));
+                                }
+                            }
+                        }
+                    });
+
+
+
+
+                    completedTask.forEach(task => {
+
+                        if (task) {
+                            console.log(task);
+                            console.log(projectId, 'ss');
+                            console.log(task.taskProjectIds, 'ss');
+
+                            if (projectId && projectId == task.taskProjectIds) {
+
+                                console.log('if vitraaa');
+                                $('#completed-item-drop').append(individual_task(task));
+                            } else {
+                                console.log('comp-else');
+                                if (!projectId) {
+                                    console.log(' else  vitraaa');
+                                    $('#completed-item-drop').append(individual_task(task));
+                                }
+                            }
+                        }
+
+                    });
+
+                    on_progress_task.forEach(task => {
+
+                        if (task && task.taskProjectIds) {
+                            console.log(task.taskProjectIds);
+                            if (projectId && projectId == task.taskProjectIds) {
+
+                                $('#on-progress-item-drop').append(individual_task(task));
+                            } else {
+
+                                if (!projectId) {
+                                    $('#on-progress-item-drop').append(individual_task(task));
+                                }
+                            }
                         }
                     });
                     acceptedTasks.forEach(task => {
-                        if (task) {
-                            $('#accepted-item-drop').append(individual_task(task));
+                        if (task && task.taskProjectIds) {
+                            console.log(task.taskProjectIds);
+                            if (projectId && projectId == task.taskProjectIds) {
+                                $('#accepted-item-drop').append(individual_task(task));
+                            } else {
+                                if (!projectId) {
+                                    $('#accepted-item-drop').append(individual_task(task));
+                                }
+                            }
 
                         }
                     });
-
 
                 },
                 error: function(xhr, status, error) {
@@ -606,18 +686,11 @@
 
 
 
-
-
 @if ($message = Session::get('success'))
 <div class="alert alert-success">
     <p>{{ $message }}</p>
 </div>
 @endif
-
-
-
-
-
 
 
 

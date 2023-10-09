@@ -33,12 +33,15 @@ class PermissionTableSeeder extends Seeder
             'task-create',
             'task-edit',
             'task-delete',
-            
-         ];
-      
-         foreach ($permissions as $permission) {
-              Permission::create(['name' => $permission]);
-         }
-     
+            'project-list',
+            'project-create',
+            'project-edit',
+            'project-delete',
+
+        ];
+
+        foreach ($permissions as $permission) {
+            Permission::create(['name' => $permission]);
+        }
     }
 }

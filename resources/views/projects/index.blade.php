@@ -4,7 +4,7 @@
 <style>
     .buttons {
         margin-left: 800px;
-       margin-top: -50px;
+        margin-top: -50px;
     }
 </style>
 
@@ -17,9 +17,9 @@
                         <h2>Projects</h2>
                     </div>
                     <div class="pull-right" style="margin-top:5px;">
-
+                        @can('project-create')
                         <a class="btn btn-success" href="{{ route('projects.create') }}"> Add New Project </a>
-
+                        @endcan
 
 
 
@@ -63,43 +63,49 @@
                                                     <strong> Total Task: </strong>
                                                     {{ $project->projectTasks->count() }}
                                                     <div class="buttons">
+                                                        @can('project-edit')
                                                         <a class="btn btn-primary" href="{{ route('projects.edit',$project->id) }}">Edit</a>
+                                                        @endcan
+
+                                                        @can('project-delete')
                                                         <a class="btn btn-danger" href=# onclick="event.preventDefault();document.getElementById('delete-project-form').submit();">Delete</a>
-</div>
-                                                            <hr>
-                                                            <a class="btn btn-info" href="{{ route('projects.tasks.index', ['project' => $project->id]) }}">Show Tasks</a>
-
-
-
-
-                                                        </div>
+                                                        @endcan
                                                     </div>
+                                                    <hr>
+                                                    @can('task-list')
+                                                    <a class="btn btn-info" href="{{ route('projects.tasks.index', ['project' => $project->id]) }}">Show Tasks</a>
+                                                    @endcan
 
-
-                                                    <form action="{{ route('projects.destroy',$project->id) }}" method="POST" id="delete-project-form">
-                                                        @csrf
-                                                        @method('DELETE')
-
-                                                    </form>
 
 
                                                 </div>
                                             </div>
+
+
+                                            <form action="{{ route('projects.destroy',$project->id) }}" method="POST" id="delete-project-form">
+                                                @csrf
+                                                @method('DELETE')
+
+                                            </form>
+
+
                                         </div>
                                     </div>
                                 </div>
-
-
-                                @endforeach
-
-
-
-
                             </div>
                         </div>
+
+
+                        @endforeach
+
+
+
+
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
-        @endsection
+@endsection
