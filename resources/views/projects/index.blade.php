@@ -57,6 +57,25 @@
                                                 </div>
                                             </div>
 
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <strong>Status Changer: </strong>
+                                                    @php
+                                                    $changers = json_decode($project->changer, true); // Decode as an array
+                                                    @endphp
+
+                                                    @if ($changers)
+                                                    @foreach($changers as $changerId)
+                                                    @foreach($users as $user)
+                                                    @if ($user->id == $changerId)
+                                                    {{ $user->name }},
+                                                    @endif
+                                                    @endforeach
+                                                    @endforeach
+                                                    @endif
+                                                </div>
+                                            </div>
+
 
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">

@@ -43,6 +43,19 @@
                             </div>
 
 
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <div class="form-group">
+                                    <strong>Give Permission to change status:</strong>
+                                    <select class="form-control" name="changer[]" multiple>
+                                        <option value="" disabled>Select to give permission</option>
+                                        @foreach($user as $users)
+                                        <option value="{{ $users->id }}">{{ $users->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+
 
                             <div class="col-xs-12 col-sm-12 col-md-12 text-center">
                                 <button type="submit" class="btn btn-primary">Submit</button>

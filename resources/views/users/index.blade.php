@@ -35,8 +35,11 @@
                             @endphp
                             @foreach ($data as $key => $user)
 
-                            @if(Auth::user()->hasRole('SuperAdmin') || (Auth::user()->hasRole('User') && optional($user)->id === Auth::id()))
 
+                            @if(Auth::user()->hasRole('Admin') || Auth::user()->is_super == 1 || (Auth::user()->hasRole('User') && optional($user)->id === Auth::id()))
+
+
+                            @if(!($user->is_super == 1))
                             <tr>
                                 <td>{{ ++$i }}</td>
                                 <td>{{ $user->name }}</td>
@@ -50,7 +53,7 @@
                                 </td>
 
                                 <td> @if(!empty($user->image))
-                                    <img height="80px"   src="{{ asset('uploads/usersImage/' . $user->image) }}">
+                                    <img height="80px" src="{{ asset('uploads/usersImage/' . $user->image) }}">
                                     @else
                                     No photo
                                     @endif
@@ -68,6 +71,7 @@
                                     @endcan
                                 </td>
                             </tr>
+                            @endif
                             @endif
                             @endforeach
                         </table>

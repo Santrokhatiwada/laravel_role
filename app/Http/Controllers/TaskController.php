@@ -37,6 +37,7 @@ class TaskController extends Controller
         $projectId = $request->input('project');
 
 
+
         // if (!isset($_GET['project']) && Auth::user()->getRoleNames()->contains('User') && Gate::denies('project-list')) {
         //     abort(403, 'Unauthorized action.');
         // }
@@ -51,6 +52,7 @@ class TaskController extends Controller
         $uniqueUsers = [];
 
         foreach ($tasks as $task) {
+
             if ($task->taskUser && !in_array($task->taskUser->id, array_column($uniqueUsers, 'id'))) {
                 $uniqueUsers[] = [
                     'id' => $task->taskUser->id,

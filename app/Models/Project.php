@@ -9,25 +9,23 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Project extends Model
 {
-    use HasFactory,LogsActivity;
+    use HasFactory, LogsActivity;
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults();
-       
+
         // Chain fluent methods for configuration options
     }
     protected $fillable = [
-        'name', 'details',
+        'name', 'details', 'changer',
     ];
 
     public function tasks()
     {
         return $this->hasMany(ProjectTask::class);
     }
-    public function projectTasks(){
-        return $this->hasManyThrough(Task::class, ProjectTask::class, 'project_id','id','id','task_id');
+    public function projectTasks()
+    {
+        return $this->hasManyThrough(Task::class, ProjectTask::class, 'project_id', 'id', 'id', 'task_id');
     }
-
-
-
 }

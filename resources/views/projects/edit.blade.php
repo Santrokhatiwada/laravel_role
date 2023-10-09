@@ -25,8 +25,8 @@
                     @endif
 
                     <form action="{{ route('projects.update',$project->id) }}" method="POST">
-                            @csrf
-                            @method('PUT')
+                        @csrf
+                        @method('PUT')
 
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12">
@@ -39,11 +39,30 @@
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
                                     <strong>Project Details:</strong>
-                                    <textarea class="form-control" style="height:150px"   name="details" placeholder="Project Details">{{$project->details}}</textarea>
+                                    <textarea class="form-control" style="height:150px" name="details" placeholder="Project Details">{{$project->details}}</textarea>
                                 </div>
                             </div>
 
-                         
+
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <div class="form-group">
+                                    <strong>Give Permission to change status:</strong>
+
+                                    <select class="form-control" name="changer[]" multiple>
+                                        @foreach($user as $users)
+                                        <option value="{{ $users->id }}" @if(in_array($users->id, $selectedUsers))
+                                            selected
+                                            @endif
+                                            >
+                                            {{ $users->name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+
+
 
                             <div class="col-xs-12 col-sm-12 col-md-12 text-center">
                                 <button type="submit" class="btn btn-primary">Submit</button>

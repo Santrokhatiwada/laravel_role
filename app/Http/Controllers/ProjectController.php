@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\Task;
-
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -27,14 +27,14 @@ class ProjectController extends Controller
 
     public function index()
     {
-
+        $users = User::get();
 
         $projects = Project::with('projectTasks')->latest()->paginate(5);
 
 
 
 
-        return view('projects.index', compact('projects'))
+        return view('projects.index', compact('projects', 'users'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
@@ -45,7 +45,8 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        return view('projects.create');
+        $user = User::get();
+        return view('projects.create', compact('user'));
     }
 
     /**
@@ -59,12 +60,17 @@ class ProjectController extends Controller
         request()->validate([
             'name' => 'required',
             'details' => 'required',
+            'changer' => 'required|array',
         ]);
 
+        $project = new Project;
+        $project->name = $request->name;
+        $project->details = $request->details;
 
+        // Store the changers as JSON in the database
+        $project->changer = json_encode($request->input('changer'));
 
-        Project::create($request->all());
-
+        $project->save();
         return redirect()->route('projects.index')
             ->with('success', 'Product created successfully.');
     }
@@ -88,10 +94,18 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Project $project)
+    public function edit($id)
     {
-        return view('projects.edit', compact('project'));
+        $project = Project::find($id);
+        $user = User::get();
+
+        // Retrieve user IDs that should be pre-selected (e.g., based on a relationship)
+        $selectedUsers = $project->changer ? json_decode($project->changer, true) : [];
+
+        return view('projects.edit', compact('project', 'user', 'selectedUsers'));
     }
+
+
 
     /**
      * Update the specified resource in storage.
@@ -102,19 +116,28 @@ class ProjectController extends Controller
      */
     public function update(Request $request, $id)
     {
-        request()->validate([
+        $request->validate([
             'name' => 'required',
             'details' => 'required',
+            'changer' => 'required|array',
         ]);
 
-        $project = Project::find($id);
+        $project = Project::find($id); // Find the existing project by ID
 
+        if (!$project) {
+            return redirect()->route('projects.index')
+                ->with('error', 'Project not found.');
+        }
 
-        $project->update($request->all());
+        $project->name = $request->name;
+        $project->details = $request->details;
+        $project->changer = json_encode($request->input('changer'));
+        $project->save();
 
         return redirect()->route('projects.index')
-            ->with('success', 'Product updated successfully.');
+            ->with('success', 'Project updated successfully.');
     }
+
 
     /**
      * Remove the specified resource from storage.

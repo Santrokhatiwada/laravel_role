@@ -34,7 +34,14 @@ class TaskRepository implements TaskRepositoryInterface
 
 
                 if (intval($_GET['project']) == $task->taskProject->id) {
+
                     $tasks = $task->taskProject->projectTasks;
+
+                    return [
+
+                        'tasks' => $tasks,
+                        'users' => $users,
+                    ];
                 } else {
                     $tasks = [];
                 }
@@ -42,6 +49,7 @@ class TaskRepository implements TaskRepositoryInterface
         }
 
         return [
+
             'tasks' => $tasks,
             'users' => $users,
         ];

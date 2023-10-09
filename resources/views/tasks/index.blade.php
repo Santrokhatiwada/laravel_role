@@ -139,6 +139,7 @@
 
                                     @foreach ($uniqueUsers as $user)
 
+
                                     <a href="javascript:void(0);" class="user-image" data-user-name="{{ $user['name'] }}" data-user-id="{{ $user['id'] }}" title="{{ $user['name'] }}">
                                         @if (!empty($user['image']))
                                         <div class="circle">
@@ -178,10 +179,11 @@
 
 
 
+
                                                             @foreach($tasks as $task)
 
 
-                                                            @if(Auth::user()->hasRole('SuperAdmin') || (Auth::user()->hasRole('User') && optional($task->taskUser)->id === Auth::id() ))
+                                                            @if(Auth::user()->hasRole('Admin') || Auth::user()->is_super == 1 || (Auth::user()->hasRole('User') && optional($task->taskUser)->id === Auth::id() ))
 
 
                                                             @if($task->statuses->isNotEmpty())
@@ -190,7 +192,7 @@
 
 
 
-                                                            <li class="list-group-item" task-id="{{ $task->id }}" data-user-id="{{ $task->user_id }}" onclick=" onTaskNameClick('{{ $task->id }}')" data-user="{{ $task->user_id }}">{{ $task->task_name }}
+                                                            <li class="list-group-item" task-id="{{ $task->id }}" onclick="onTaskNameClick('{{ $task->id }}')">{{ $task->task_name }}
 
                                                                 @if ($task->priority === 'high-priority')
                                                                 <i id="priority" class="fa-solid fa-h" style="color: #ff2600;"></i>
@@ -244,7 +246,7 @@
                                                         <ul class="list-group connectedSortable shadow-lg" id="on-progress-item-drop">
 
                                                             @foreach($tasks as $task)
-                                                            @if(Auth::user()->hasRole('SuperAdmin') || (Auth::user()->hasRole('User') && optional($task->taskUser)->id === Auth::id()))
+                                                            @if(Auth::user()->hasRole('Admin') || Auth::user()->is_super == 1|| (Auth::user()->hasRole('User') && optional($task->taskUser)->id === Auth::id()))
 
                                                             @if($task->statuses->isNotEmpty())
 
@@ -298,7 +300,7 @@
                                                         <ul class="list-group  connectedSortable" id="completed-item-drop">
 
                                                             @foreach($tasks as $task)
-                                                            @if(Auth::user()->hasRole('SuperAdmin') || (Auth::user()->hasRole('User') && optional($task->taskUser)->id === Auth::id()))
+                                                            @if(Auth::user()->hasRole('Admin') || Auth::user()->is_super == 1 || (Auth::user()->hasRole('User') && optional($task->taskUser)->id === Auth::id()))
 
                                                             @if($task->statuses->isNotEmpty())
 
@@ -345,7 +347,7 @@
                                                         <ul class="list-group  connectedSortable" id="accepted-item-drop">
 
                                                             @foreach($tasks as $task)
-                                                            @if(Auth::user()->hasRole('SuperAdmin') || (Auth::user()->hasRole('User') && optional($task->taskUser)->id === Auth::id()))
+                                                            @if(Auth::user()->hasRole('Admin') || Auth::user()->is_super == 1 || (Auth::user()->hasRole('User') && optional($task->taskUser)->id === Auth::id()))
 
                                                             @if($task->statuses->isNotEmpty())
 
@@ -438,11 +440,14 @@
             opacity: 0.5,
             start: function(event, ui) {
                 // Set the flag to true when user interaction starts
+
                 isUserInteraction = true;
             },
             update: function(event, ui) {
                 if (isUserInteraction) {
                     var taskId = ui.item.attr("task-id");
+
+
 
                     // var columnId = $("#completed-empty").attr("id");
                     var newStatus = ui.item.closest(".empty-list").data("status");
