@@ -92,7 +92,7 @@
                                                     </div>
                                                     <hr>
                                                     @can('task-list')
-                                                    <a class="btn btn-info" href="{{ route('projects.tasks.index', ['project' => $project->id]) }}">Show Tasks</a>
+                                                    <a class="btn btn-info" href="{{ route('projects.tasks.index', ['project' => $project->id]) }}">View Tasks</a>
                                                     @endcan
 
 

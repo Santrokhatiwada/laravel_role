@@ -18,19 +18,19 @@ class UserController extends Controller
 
     function __construct()
     {
-         $this->middleware('permission:user-list|user-create|user-edit|user-delete', ['only' => ['index','store']]);
-         $this->middleware('permission:user-create', ['only' => ['create','store']]);
-         $this->middleware('permission:user-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:user-list|user-create|user-edit|user-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:user-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:user-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:user-delete', ['only' => ['destroy']]);
     }
     public function index(Request $request)
     {
-       
-        $data = User::orderBy('id','DESC')->paginate(5);
-        return view('users.index',compact('data'))
+
+        $data = User::orderBy('id', 'DESC')->paginate(5);
+        return view('users.index', compact('data'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
-    
+
     /**
      * Show the form for creating a new resource.
      *
@@ -38,10 +38,10 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::pluck('name','name')->all();
-        return view('users.create',compact('roles'));
+        $roles = Role::pluck('name', 'name')->all();
+        return view('users.create', compact('roles'));
     }
-    
+
     /**
      * Store a newly created resource in storage.
      *
@@ -54,22 +54,22 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
-            'roles' => 'required',
+            'role' => 'required',
         ]);
-      
+
         $input = $request->all();
 
         $input['password'] = Hash::make($input['password']);
-       
+
         $user = User::create($input);
-       
-        $user->assignRole($request->input('roles'));
-        
-    
+
+        $user->assignRole($request->input('role'));
+
+
         return redirect()->route('users.index')
-                        ->with('success','User created successfully');
+            ->with('success', 'User created successfully');
     }
-    
+
     /**
      * Display the specified resource.
      *
@@ -79,9 +79,9 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::find($id);
-        return view('users.show',compact('user'));
+        return view('users.show', compact('user'));
     }
-    
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -91,12 +91,12 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name','name')->all();
-    
-        return view('users.edit',compact('user','roles','userRole'));
+        $roles = Role::pluck('name', 'name')->all();
+        $userRole = $user->roles->pluck('name', 'name')->all();
+
+        return view('users.edit', compact('user', 'roles', 'userRole'));
     }
-    
+
     /**
      * Update the specified resource in storage.
      *
@@ -108,51 +108,50 @@ class UserController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$id,
+            'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'same:confirm-password',
             'roles' => 'nullable',
             'image' => 'sometimes|nullable|max:2048',
         ]);
-    
+
         $input = $request->all();
 
-        if(!empty($input['password'])){ 
+        if (!empty($input['password'])) {
             $input['password'] = Hash::make($input['password']);
-        }else{
-            $input = Arr::except($input,array('password'));    
+        } else {
+            $input = Arr::except($input, array('password'));
         }
 
-      
+
         $user = User::find($id);
 
-        $image=$request->image;
-        $dbname=null;
-       if($image){
-          if ($user->image){
-            unlink('uploads/users/'.$user->image);
-          }
-              $dbname= 'user-image-'.time().'.'.$image->clientExtension(); 
-              $source=$image->getRealPath();
-              $destination='uploads/usersImage/'.$dbname;
-              
-              copy($source,$destination);
-              $input['image'] = $dbname;
-          
-          }
+        $image = $request->image;
+        $dbname = null;
+        if ($image) {
+            if ($user->image) {
+                unlink('uploads/users/' . $user->image);
+            }
+            $dbname = 'user-image-' . time() . '.' . $image->clientExtension();
+            $source = $image->getRealPath();
+            $destination = 'uploads/usersImage/' . $dbname;
+
+            copy($source, $destination);
+            $input['image'] = $dbname;
+        }
 
 
         $user->update($input);
-      
+
         // DB::table('model_has_roles')->where('model_id',$id)->delete();
-    
-       if( Auth::user()->hasRole('SuperAdmin')){
-               $user->assignRole($request->input('roles'));
-       }
-    
+
+        if (Auth::user()->hasRole('Admin') || Auth::user()->is_super == 1) {
+            $user->assignRole($request->input('role'));
+        }
+
         return redirect()->route('users.index')
-                        ->with('success','User updated successfully');
+            ->with('success', 'User updated successfully');
     }
-    
+
     /**
      * Remove the specified resource from storage.
      *
@@ -163,26 +162,25 @@ class UserController extends Controller
     {
         User::find($id)->delete();
         return redirect()->route('users.index')
-                        ->with('success','User deleted successfully');
+            ->with('success', 'User deleted successfully');
     }
 
 
-    public function logActivity(){
-        $activityLogs = Activity::all();  
-        
+    public function logActivity()
+    {
+        $activityLogs = Activity::all();
+
 
         return view('activity-logs.index', compact('activityLogs'));
     }
 
     public function deleteImage($id)
     {
-       $user=User::find($id);
-      unlink('uploads/usersImage/'.$user->image);
-      $user-> update(['image'=>null]);
-      
-        return back()
-                        ->with('success','Blog image deleted successfully');
-    }
- 
-}
+        $user = User::find($id);
+        unlink('uploads/usersImage/' . $user->image);
+        $user->update(['image' => null]);
 
+        return back()
+            ->with('success', 'Blog image deleted successfully');
+    }
+}

@@ -1,6 +1,8 @@
 <style>
     #threeDot {
-        margin-left: 2px;
+        margin-left: 100px;
+        position: absolute;
+        margin-top: 5px;
 
     }
 </style>
@@ -8,7 +10,7 @@
 <ul class="dropdown-menu">
     <li>
         <span class="dropdown-item">
-        <a href="{{ route('projects.tasks.edit', ['task' => $task->id, 'project' => $project->id]) }}">
+            <a href="{{ route('projects.tasks.edit', ['task' => $task->id, 'project' => $project->id]) }}">
                 <i class="fas fa-pen mx-2"></i>
                 <button class="btn btn-primary">Update</button>
             </a>

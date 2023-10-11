@@ -46,11 +46,10 @@
                                 <td>{{ $user->email }}</td>
                                 <td>
                                     @if(!empty($user->getRoleNames()))
-                                    @foreach($user->getRoleNames() as $v)
-                                    <label class="text-primary">{{ $v }}</label>
-                                    @endforeach
+                                    <label class="text-primary">{{ $user->getRoleNames()[0] }}</label>
                                     @endif
                                 </td>
+
 
                                 <td> @if(!empty($user->image))
                                     <img height="80px" src="{{ asset('uploads/usersImage/' . $user->image) }}">

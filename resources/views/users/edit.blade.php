@@ -27,7 +27,7 @@
 
 
                         {!! Form::model($user, ['method' => 'PATCH', 'route' => ['users.update', $user->id], 'enctype' => 'multipart/form-data']) !!}
-                            <div class="row">
+                        <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
                                     <strong>Name:</strong>
@@ -53,14 +53,15 @@
                                 </div>
                             </div>
 
-                            @role('SuperAdmin')
+                            @if(Auth::user()->hasRole('Admin') || Auth::user()->is_super == 1)
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
                                     <strong>Role:</strong>
-                                    {!! Form::select('roles[]', $roles,$userRole, array('class' => 'form-control','multiple')) !!}
+                                    {!! Form::select('role', $roles, $userRole, array('class' => 'form-control')) !!}
                                 </div>
                             </div>
-                            @endrole
+
+                            @endif
 
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
@@ -94,8 +95,8 @@
 
 <form action="{{ route('users.deleteImage',$user->id) }}" method="POST" id="delete-image-form">
     @csrf
-                      @method('DELETE')
-                     
+    @method('DELETE')
+
 </form>
 
 

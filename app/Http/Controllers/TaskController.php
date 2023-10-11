@@ -197,9 +197,11 @@ class TaskController extends Controller
             'user_id' => 'nullable',
             'deadline' => 'nullable',
             'new_status' => 'required',
-
+            'project_id' => 'nullable',
         ]);
-
+        if ($data['project_id']) {
+            $project = $data['project_id'];
+        }
 
 
         // $data['assigner_id'] = intval($request->assigner_id);
@@ -210,8 +212,11 @@ class TaskController extends Controller
 
         $task = $this->taskRepository->updateTask($id, $data);
 
-
-        return redirect()->route('tasks.index', compact('task'));
+        if ($data['project_id']) {
+            return redirect()->route('projects.tasks.index', ['project' => $project, 'task' => $task]);
+        } else {
+            return redirect()->route('tasks.index', compact('task'));
+        }
     }
 
     /**

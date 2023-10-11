@@ -23,6 +23,8 @@
 
     <li><a class="nav-link" href="{{ route('projects.index') }}">Project Management</a></li>
     <li><a class="nav-link" href="{{ route('tasks.index') }}">Task Management</a></li>
+    <li><a class="nav-link" href="{{ route('reports.index') }}">Report</a></li>
+
     @endif
 
     @role('User')

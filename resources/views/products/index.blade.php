@@ -31,7 +31,7 @@
                             </tr>
                             @foreach ($products as $product)
                             <tr>
-                                <td>{{ ++$i }}</td>
+                                <td>p</td>
                                 <td>{{ $product->name }}</td>
                                 <td>{{ $product->details }}</td>
                                 <td>
